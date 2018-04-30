@@ -1,12 +1,17 @@
 import pygame, sys
+import math
 
 BLACK = 0, 0, 0
 WHITE = 255, 255, 255
 BLUE = (0, 0, 255)
-GREEN = ( 0, 255, 0)
+GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 
+
 class Car(pygame.sprite.Sprite):
+    DELTA_ANGLE = 3
+    SPEED = 5
+
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
 
@@ -26,14 +31,29 @@ class Car(pygame.sprite.Sprite):
         self.rect[0] -= 5
 
     def rotate_right(self):
-        self.angle -= 3
-    def rotate_left(self):
-        self.angle += 3
+        self.angle = (self.angle-self.DELTA_ANGLE)%-360
 
-        # self.image = pygame.transform.rotate(self.image, -1)
-        # self.rect = self.image.get_rect(center=self.orig_rect.center)
+    def rotate_left(self):
+        self.angle = (self.angle + self.DELTA_ANGLE)%-360
+
+    def move_forward(self):
+        dx = math.cos(math.radians(self.angle+90))
+        dy = math.sin(math.radians(self.angle+90))
+
+        self.rect[0] += dx * self.SPEED
+        self.rect[1] -= dy * self.SPEED
+
+    def move_backward(self):
+        dx = math.cos(math.radians(self.angle + 90))
+        dy = math.sin(math.radians(self.angle + 90))
+
+        self.rect[0] -= dx * self.SPEED
+        self.rect[1] += dy * self.SPEED
+
+
 
     def displayCar(self):
+        print(-self.angle)
         self.image = pygame.transform.rotate(self.orig_image, self.angle)
         self.rect = self.image.get_rect(center=self.rect.center)
 
@@ -57,13 +77,13 @@ class Game:
     def handle_input(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_RIGHT]:
-            self.car.move_right()
-        if keys[pygame.K_LEFT]:
-            self.car.move_left()
-        if keys[pygame.K_DOWN]:
             self.car.rotate_right()
-        if keys[pygame.K_UP]:
+        if keys[pygame.K_LEFT]:
             self.car.rotate_left()
+        if keys[pygame.K_DOWN]:
+            self.car.move_backward()
+        if keys[pygame.K_UP]:
+            self.car.move_forward()
 
     def main_loop(self):
 
