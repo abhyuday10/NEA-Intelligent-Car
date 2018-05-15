@@ -38,22 +38,23 @@ class Car(pygame.sprite.Sprite):
 
     def move_forward(self):
         dx = math.cos(math.radians(self.angle+90))
+        # print("dx: ",dx,"    angle: ",abs(self.angle))
         dy = math.sin(math.radians(self.angle+90))
-
-        self.rect[0] += dx * self.SPEED
-        self.rect[1] -= dy * self.SPEED
+        # print("dy: ",dy)
+        self.rect[0] += int(dx * self.SPEED)
+        self.rect[1] -= int(dy * self.SPEED)
 
     def move_backward(self):
         dx = math.cos(math.radians(self.angle + 90))
         dy = math.sin(math.radians(self.angle + 90))
 
-        self.rect[0] -= dx * self.SPEED
-        self.rect[1] += dy * self.SPEED
+        self.rect[0] -= int(dx * self.SPEED)
+        self.rect[1] += int(dy * self.SPEED)
 
 
 
     def displayCar(self):
-        print(-self.angle)
+        # print("Forward Angle: ",self.angle)
         self.image = pygame.transform.rotate(self.orig_image, self.angle)
         self.rect = self.image.get_rect(center=self.rect.center)
 
@@ -64,7 +65,7 @@ class Car(pygame.sprite.Sprite):
 
 class Game:
     clock = pygame.time.Clock()
-    screen_size = width, height = 800, 500
+    screen_size = width, height = 800, 800
     screen = pygame.display.set_mode(screen_size)
 
     def __init__(self):
