@@ -1,8 +1,8 @@
 import pygame, sys
 import math
 
-BLACK = 0, 0, 0
-WHITE = 255, 255, 255
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
@@ -43,7 +43,7 @@ class Car(pygame.sprite.Sprite):
         # print("dy: ",dy)
         self.rect[0] += int(dx * self.SPEED)
         self.rect[1] -= int(dy * self.SPEED)
-
+        print(int(dx * self.SPEED))
     def move_backward(self):
         dx = math.cos(math.radians(self.angle + 90))
         dy = math.sin(math.radians(self.angle + 90))
@@ -65,7 +65,7 @@ class Car(pygame.sprite.Sprite):
 
 class Game:
     clock = pygame.time.Clock()
-    screen_size = width, height = 800, 800
+    screen_size = width, height = 800, 500
     screen = pygame.display.set_mode(screen_size)
 
     def __init__(self):
