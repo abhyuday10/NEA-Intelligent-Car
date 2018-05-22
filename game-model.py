@@ -68,7 +68,7 @@ class Car(pygame.sprite.Sprite):
             outline_image.set_at(point, BLUE)
         Game.screen.blit(outline_image, self.rect)
 
-        readings = self.get_sonar_readings(self.rect[0], self.rect[1], math.radians(abs(self.angle)-90))
+        readings = self.get_sonar_readings(self.rect.center[0], self.rect.center[1], math.radians(abs(self.angle)-90))
         print(readings)
         pygame.draw.line(Game.screen, BLUE, [self.rect[0], self.rect[1]], [100, 200], 2)
 
@@ -115,7 +115,9 @@ class Car(pygame.sprite.Sprite):
 
         # Rotate them and get readings.
         readings.append(self.get_arm_distance(arm_left, x, y, angle, 0.75))
+        readings.append(self.get_arm_distance(arm_left, x, y, angle, 1.55))
         readings.append(self.get_arm_distance(arm_middle, x, y, angle, 0))
+        readings.append(self.get_arm_distance(arm_left, x, y, angle, -1.55))
         readings.append(self.get_arm_distance(arm_right, x, y, angle, -0.75))
 
         return readings
@@ -127,12 +129,12 @@ class Car(pygame.sprite.Sprite):
             return 1
 
     def make_sonar_arm(self, x, y):
-        spread = 10  # Default spread.
+        spread = 8  # Default spread.
         distance = 20  # Gap before first sensor.
         arm_points = []
         # Make an arm. We build it flat because we'll rotate it about the
         # center later.
-        for i in range(1, 40):
+        for i in range(1, 30):
             arm_points.append((distance + x + (spread * i), y))
         return arm_points
 
