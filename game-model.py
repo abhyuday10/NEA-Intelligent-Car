@@ -10,7 +10,7 @@ GRAY = (169, 169, 169)
 
 
 class Car(pygame.sprite.Sprite):
-    DELTA_ANGLE = 3
+    DELTA_ANGLE = 2
     SPEED = 5
 
     def __init__(self, x, y):
@@ -44,7 +44,7 @@ class Car(pygame.sprite.Sprite):
         # print("dy: ",dy)
         self.rect[0] += int(dx * self.SPEED)
         self.rect[1] -= int(dy * self.SPEED)
-        print(int(dx * self.SPEED))
+
     def move_backward(self):
         dx = math.cos(math.radians(self.angle + 90))
         dy = math.sin(math.radians(self.angle + 90))
@@ -57,7 +57,7 @@ class Car(pygame.sprite.Sprite):
         self.image = pygame.transform.rotate(self.orig_image, self.angle)
         self.rect = self.image.get_rect(center=self.rect.center)
 
-        pygame.draw.rect(Game.screen, GRAY, self.rect)
+        # pygame.draw.rect(Game.screen, GRAY, self.rect)
         Game.screen.blit(self.image, self.rect)
         pygame.draw.circle(Game.screen, BLUE, self.rect.center, 5)
 
@@ -68,9 +68,9 @@ class Car(pygame.sprite.Sprite):
             outline_image.set_at(point, BLUE)
         Game.screen.blit(outline_image, self.rect)
 
-        readings = self.get_sonar_readings(self.rect.center[0], self.rect.center[1], math.radians(abs(self.angle)-90))
+        readings = self.get_sonar_readings(self.rect.center[0], self.rect.center[1], math.radians(abs(self.angle) - 90))
         print(readings)
-        pygame.draw.line(Game.screen, BLUE, [self.rect[0], self.rect[1]], [100, 200], 2)
+        pygame.draw.line(Game.screen, BLUE, [self.rect.center[0], self.rect.center[1]], [300, 300], 2)
 
     def get_arm_distance(self, arm, x, y, angle, offset):
         # Used to count the distance.
@@ -85,29 +85,27 @@ class Car(pygame.sprite.Sprite):
                 x, y, point[0], point[1], angle + offset
             )
 
-
             # Check if we've hit something. Return the current i (distance)
             # if we did.
             if rotated_p[0] <= 0 or rotated_p[1] <= 0 \
                     or rotated_p[0] >= Game.width or rotated_p[1] >= Game.height:
                 return i  # Sensor is off the screen.
+            elif self.check_inside_circle(rotated_p[0], rotated_p[1], 300, 300, 50):
+                return i
+
+
             else:
                 pygame.draw.circle(Game.screen, (BLACK), (rotated_p), 2)
-
-
 
         # Return the distance for the arm.
         return i
 
+    def check_inside_circle(self, x, y, a, b, r):
+        return (x - a) * (x - a) + (y - b) * (y - b) < r * r
+
     def get_sonar_readings(self, x, y, angle):
         readings = []
-        """
-        Instead of using a grid of boolean(ish) sensors, sonar readings
-        simply return N "distance" readings, one for each sonar
-        we're simulating. The distance is a count of the first non-zero
-        reading starting at the object. For instance, if the fifth sensor
-        in a sonar "arm" is non-zero, then that arm returns a distance of 5.
-        """
+
         # Make our arms.
         arm_left = self.make_sonar_arm(x, y)
         arm_middle = arm_left
@@ -159,11 +157,27 @@ class Game:
         self.main_loop()
 
     def draw(self):
-        self.car.displayCar()
+
         self.drawObstacles()
+        self.car.displayCar()
+        self.drawBorder()
+
+    def drawBorder(self):
+        # top line
+        line_width=10
+        colour=RED
+        width=self.width
+        height=self.height
+        pygame.draw.rect(self.screen, colour, [0, 0, width, line_width])
+        # bottom line
+        pygame.draw.rect(self.screen, colour, [0, height-line_width, width, line_width])
+        # left line
+        pygame.draw.rect(self.screen, colour, [0, 0, line_width, height])
+        # right line
+        pygame.draw.rect(self.screen, colour, [width-line_width, 0, line_width, height + line_width])
 
     def drawObstacles(self):
-        pygame.draw.circle(self.screen,GRAY, [250,300],50)
+        pygame.draw.circle(self.screen, GRAY, [300, 300], 50)
 
     def handle_input(self):
         keys = pygame.key.get_pressed()
