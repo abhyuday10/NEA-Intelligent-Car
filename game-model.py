@@ -1,7 +1,6 @@
 import math
 import random
 import sys
-
 import pygame
 
 BLACK = (0, 0, 0)
@@ -19,12 +18,16 @@ class Car(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
 
+        self.boom = pygame.image.load("boom.png")
+        self.boom = pygame.transform.scale(self.boom, (50, 50))
+
         self.image = pygame.image.load("car.png")
         self.image = pygame.transform.scale(self.image, (60, 120))
         self.orig_image = self.image
 
+        self.pos = [x, y]
         self.rect = self.image.get_rect()
-        self.rect[0], self.rect[1] = x, y
+        self.rect.center = (x, y)
 
         self.angle = 0
 
@@ -46,19 +49,19 @@ class Car(pygame.sprite.Sprite):
         self.angle = (self.angle + self.DELTA_ANGLE) % -360
 
     def move_forward(self):
+        print(self.pos)
         dx = math.cos(math.radians(self.angle + 90))
-        # print("dx: ",dx,"    angle: ",abs(self.angle))
         dy = math.sin(math.radians(self.angle + 90))
-        # print("dy: ",dy)
-        self.rect[0] += int(dx * self.SPEED)
-        self.rect[1] -= int(dy * self.SPEED)
+
+        self.pos = self.pos[0] + (dx * self.SPEED), self.pos[1] - (dy * self.SPEED)
+        self.rect.center = self.pos
 
     def move_backward(self):
         dx = math.cos(math.radians(self.angle + 90))
         dy = math.sin(math.radians(self.angle + 90))
 
-        self.rect[0] -= int(dx * self.SPEED)
-        self.rect[1] += int(dy * self.SPEED)
+        self.pos = self.pos[0] - (dx * self.SPEED), self.pos[1] + (dy * self.SPEED)
+        self.rect.center = self.pos
 
     def displayCar(self):
         # print("Forward Angle: ",self.angle)
@@ -82,16 +85,18 @@ class Car(pygame.sprite.Sprite):
         # print(readings)
         pygame.draw.line(Game.screen, BLUE, [self.rect.center[0], self.rect.center[1]], [300, 300], 2)
 
-        self.crashed=self.check_if_crashed()
-
+        self.crashed = self.check_if_crashed()
 
     def check_if_crashed(self):
         for point in self.mask.outline():
-            i=[0,0]
-            i[0]=point[0]+self.rect[0]
+            i = [0, 0]
+            i[0] = point[0] + self.rect[0]
             i[1] = point[1] + self.rect[1]
             if self.check_if_point_in_any_obstacle(i):
-                pygame.draw.circle(Game.screen,BLACK,i,5)
+                rect = [i[0] - 25, i[1] - 25]
+
+                Game.screen.blit(self.boom, rect)
+                # pygame.draw.circle(Game.screen, BLACK, i, 5)
                 return True
         return False
 
@@ -192,13 +197,28 @@ class Game:
 
         self.main_loop()
 
+    def check_if_circles_overlap(self, x, y, r, a, b, t):
+        if math.hypot(x - a, y - b) <= (r + t):
+            return True
+        return False
+
     def generateObstacles(self):
         obstacles = []
+        overlapping = False
         colour = BLUE
         for i in range(random.randint(3, 5)):
             radius = random.randint(40, 90)
             position = [random.randint(0, self.width - radius), random.randint(0, self.height - radius)]
             obstacles.append(CircleObstacle(colour, position[0], position[1], radius))
+
+        for obs in obstacles:
+            for obst in obstacles:
+                if obs == obst:
+                    continue
+                elif self.check_if_circles_overlap(obs.pos[0], obs.pos[1], obs.radius, obst.pos[0], obst.pos[1],
+                                                   obst.radius):
+                    overlapping = True
+        print("overlapping: ", str(overlapping))
         return obstacles
 
     def draw(self):
