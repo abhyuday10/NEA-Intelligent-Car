@@ -1,5 +1,4 @@
 import random
-import time
 
 CODE_TABLE = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-', '*', '/']
 CHROMOSOME_LENGTH = 40
@@ -146,7 +145,6 @@ def breed_two_chromosomes(first, second):
     else:
         return [first, second]
 
-
         # firstList = list(first.code)
         # secondList = list(second.code)
         #
@@ -216,12 +214,11 @@ def main():
             if chromosome.fitness > bestChromosome.fitness:
                 bestChromosome = chromosome
 
-
         # TODO: Calculate and display normalised generation fitness
         total_population_fitness = 0
         for i in population:
             total_population_fitness += i.fitness
-        avg_fitness=total_population_fitness/len(population)
+        avg_fitness = total_population_fitness / len(population)
 
         print("Generation: ", generation)
         print("Average generation fitness: ", avg_fitness)
@@ -229,15 +226,13 @@ def main():
         print("Best Chromosome: ", bestChromosome.formula, " = ", bestChromosome.result)
         print("")
 
-
-
         if bestChromosome.result == TARGET:
             solution_found = True
             print("SUCCESS!!")
 
         # Breed new generation
         new_population = []
-        while len(new_population)<POOL_SIZE:
+        while len(new_population) < POOL_SIZE:
 
             parent1 = choose_parent(population)
             parent2 = choose_parent(population)
@@ -250,10 +245,8 @@ def main():
 
             childs = breed_two_chromosomes(parent1, parent2)
             for child in childs:
-                child=mutate(child)
+                child = mutate(child)
                 new_population.append(child)
-
-
 
         # print([thing.result for thing in population])
 
@@ -264,4 +257,3 @@ def main():
 
 
 main()
-

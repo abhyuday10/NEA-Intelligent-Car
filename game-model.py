@@ -1,5 +1,8 @@
-import pygame, sys
 import math
+import random
+import sys
+
+import pygame
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -10,7 +13,7 @@ GRAY = (169, 169, 169)
 
 
 class Car(pygame.sprite.Sprite):
-    DELTA_ANGLE = 3
+    DELTA_ANGLE = 2
     SPEED = 5
 
     def __init__(self, x, y):
@@ -25,11 +28,16 @@ class Car(pygame.sprite.Sprite):
 
         self.angle = 0
 
-    def move_right(self):
-        self.rect[0] += 5
+        self.crashed = False
+        self.obstacles = None
 
-    def move_left(self):
-        self.rect[0] -= 5
+        # self.borders = Game.drawBorder()
+
+    # def move_right(self):
+    #     self.rect[0] += 5
+    #
+    # def move_left(self):
+    #     self.rect[0] -= 5
 
     def rotate_right(self):
         self.angle = (self.angle - self.DELTA_ANGLE) % -360
@@ -44,7 +52,7 @@ class Car(pygame.sprite.Sprite):
         # print("dy: ",dy)
         self.rect[0] += int(dx * self.SPEED)
         self.rect[1] -= int(dy * self.SPEED)
-        print(int(dx * self.SPEED))
+
     def move_backward(self):
         dx = math.cos(math.radians(self.angle + 90))
         dy = math.sin(math.radians(self.angle + 90))
@@ -57,20 +65,35 @@ class Car(pygame.sprite.Sprite):
         self.image = pygame.transform.rotate(self.orig_image, self.angle)
         self.rect = self.image.get_rect(center=self.rect.center)
 
-        pygame.draw.rect(Game.screen, GRAY, self.rect)
+        # pygame.draw.rect(Game.screen, GRAY, self.rect)
         Game.screen.blit(self.image, self.rect)
         pygame.draw.circle(Game.screen, BLUE, self.rect.center, 5)
 
+        # Calculate and display car collsion mask
         myImage_mask = pygame.mask.from_surface(self.image)
+        self.mask = myImage_mask
         outline_image = pygame.Surface(self.image.get_size()).convert_alpha()
         outline_image.fill((0, 0, 0, 0))
         for point in myImage_mask.outline():
             outline_image.set_at(point, BLUE)
         Game.screen.blit(outline_image, self.rect)
 
-        readings = self.get_sonar_readings(self.rect.center[0], self.rect.center[1], math.radians(abs(self.angle)-90))
-        print(readings)
-        pygame.draw.line(Game.screen, BLUE, [self.rect[0], self.rect[1]], [100, 200], 2)
+        readings = self.get_sonar_readings(self.rect.center[0], self.rect.center[1], math.radians(abs(self.angle) - 90))
+        # print(readings)
+        pygame.draw.line(Game.screen, BLUE, [self.rect.center[0], self.rect.center[1]], [300, 300], 2)
+
+        self.crashed=self.check_if_crashed()
+
+
+    def check_if_crashed(self):
+        for point in self.mask.outline():
+            i=[0,0]
+            i[0]=point[0]+self.rect[0]
+            i[1] = point[1] + self.rect[1]
+            if self.check_if_point_in_any_obstacle(i):
+                pygame.draw.circle(Game.screen,BLACK,i,5)
+                return True
+        return False
 
     def get_arm_distance(self, arm, x, y, angle, offset):
         # Used to count the distance.
@@ -85,29 +108,31 @@ class Car(pygame.sprite.Sprite):
                 x, y, point[0], point[1], angle + offset
             )
 
-
             # Check if we've hit something. Return the current i (distance)
             # if we did.
             if rotated_p[0] <= 0 or rotated_p[1] <= 0 \
                     or rotated_p[0] >= Game.width or rotated_p[1] >= Game.height:
                 return i  # Sensor is off the screen.
+            elif self.check_if_point_in_any_obstacle(rotated_p):
+                return i
+
             else:
                 pygame.draw.circle(Game.screen, (BLACK), (rotated_p), 2)
-
-
 
         # Return the distance for the arm.
         return i
 
+    def check_if_point_in_any_obstacle(self, point):
+        for obstacle in self.obstacles:
+            if self.check_inside_circle(point[0], point[1], obstacle.pos[0], obstacle.pos[1], obstacle.radius):
+                return True
+
+    def check_inside_circle(self, x, y, a, b, r):
+        return (x - a) * (x - a) + (y - b) * (y - b) < r * r
+
     def get_sonar_readings(self, x, y, angle):
         readings = []
-        """
-        Instead of using a grid of boolean(ish) sensors, sonar readings
-        simply return N "distance" readings, one for each sonar
-        we're simulating. The distance is a count of the first non-zero
-        reading starting at the object. For instance, if the fifth sensor
-        in a sonar "arm" is non-zero, then that arm returns a distance of 5.
-        """
+
         # Make our arms.
         arm_left = self.make_sonar_arm(x, y)
         arm_middle = arm_left
@@ -121,12 +146,6 @@ class Car(pygame.sprite.Sprite):
         readings.append(self.get_arm_distance(arm_right, x, y, angle, -0.75))
 
         return readings
-
-    def get_track_or_not(self, reading):
-        if reading == THECOLORS['black']:
-            return 0
-        else:
-            return 1
 
     def make_sonar_arm(self, x, y):
         spread = 8  # Default spread.
@@ -149,6 +168,16 @@ class Car(pygame.sprite.Sprite):
         return int(new_x), int(new_y)
 
 
+class CircleObstacle():
+    def __init__(self, colour, x, y, radius):
+        self.colour = colour
+        self.pos = [x, y]
+        self.radius = radius
+
+    def draw_to_screen(self, screen):
+        pygame.draw.circle(screen, self.colour, self.pos, self.radius)
+
+
 class Game:
     clock = pygame.time.Clock()
     screen_size = width, height = 800, 500
@@ -156,14 +185,47 @@ class Game:
 
     def __init__(self):
         self.car = Car(250, 200)
+
+        print("created obstacles")
+        self.obstacles = self.generateObstacles()
+        self.car.obstacles = self.obstacles
+
         self.main_loop()
 
+    def generateObstacles(self):
+        obstacles = []
+        colour = BLUE
+        for i in range(random.randint(3, 5)):
+            radius = random.randint(40, 90)
+            position = [random.randint(0, self.width - radius), random.randint(0, self.height - radius)]
+            obstacles.append(CircleObstacle(colour, position[0], position[1], radius))
+        return obstacles
+
     def draw(self):
-        self.car.displayCar()
+
         self.drawObstacles()
+        self.car.displayCar()
+        self.drawBorder()
+
+    def drawBorder(self):
+        # top line
+        line_width = 10
+        colour = RED
+        width = self.width
+        height = self.height
+        # top line
+        top = pygame.draw.rect(self.screen, colour, [0, 0, width, line_width])
+        # bottom line
+        bottom = pygame.draw.rect(self.screen, colour, [0, height - line_width, width, line_width])
+        # left line
+        left = pygame.draw.rect(self.screen, colour, [0, 0, line_width, height])
+        # right line
+        right = pygame.draw.rect(self.screen, colour, [width - line_width, 0, line_width, height + line_width])
+        return [top, bottom, left, right]
 
     def drawObstacles(self):
-        pygame.draw.circle(self.screen,GRAY, [250,300],50)
+        for obstacle in self.obstacles:
+            obstacle.draw_to_screen(self.screen)
 
     def handle_input(self):
         keys = pygame.key.get_pressed()
