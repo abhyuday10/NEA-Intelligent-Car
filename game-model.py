@@ -1,6 +1,7 @@
 import math
 import random
 import sys
+
 import pygame
 
 BLACK = (0, 0, 0)
@@ -32,9 +33,9 @@ class Car(pygame.sprite.Sprite):
         self.angle = 0
 
         self.crashed = False
-        self.obstacles = None
 
-        # self.borders = Game.drawBorder()
+        self.obstacles = None
+        self.borders = None
 
     # def move_right(self):
     #     self.rect[0] += 5
@@ -89,13 +90,13 @@ class Car(pygame.sprite.Sprite):
 
     def check_if_crashed(self):
         for point in self.mask.outline():
-            i = [0, 0]
-            i[0] = point[0] + self.rect[0]
-            i[1] = point[1] + self.rect[1]
-            if self.check_if_point_in_any_obstacle(i):
-                rect = [i[0] - 25, i[1] - 25]
-
-                Game.screen.blit(self.boom, rect)
+            ofsettedMaskPoint = [0, 0]
+            ofsettedMaskPoint[0] = point[0] + self.rect[0]
+            ofsettedMaskPoint[1] = point[1] + self.rect[1]
+            if self.check_if_point_in_any_obstacle(ofsettedMaskPoint) or self.check_if_point_in_any_border(
+                    ofsettedMaskPoint):
+                adjustedRect = [ofsettedMaskPoint[0] - 25, ofsettedMaskPoint[1] - 25]
+                Game.screen.blit(self.boom, adjustedRect)
                 # pygame.draw.circle(Game.screen, BLACK, i, 5)
                 return True
         return False
@@ -127,10 +128,20 @@ class Car(pygame.sprite.Sprite):
         # Return the distance for the arm.
         return i
 
+    def check_if_point_in_any_border(self, point):
+        for border in self.borders:
+            if self.check_inside_rect(point[0], point[1], border):
+                return True
+        return False
+
     def check_if_point_in_any_obstacle(self, point):
         for obstacle in self.obstacles:
             if self.check_inside_circle(point[0], point[1], obstacle.pos[0], obstacle.pos[1], obstacle.radius):
                 return True
+        return False
+
+    def check_inside_rect(self, x, y, rect):
+        return (rect[0] + rect[2]) > x > rect[0] and (rect[1] + rect[3]) > y > rect[1]
 
     def check_inside_circle(self, x, y, a, b, r):
         return (x - a) * (x - a) + (y - b) * (y - b) < r * r
@@ -195,6 +206,8 @@ class Game:
         self.obstacles = self.generateObstacles()
         self.car.obstacles = self.obstacles
 
+        self.car.borders = self.drawBorder()
+
         self.main_loop()
 
     def check_if_circles_overlap(self, x, y, r, a, b, t):
@@ -206,7 +219,7 @@ class Game:
         obstacles = []
         overlapping = False
         colour = BLUE
-        for i in range(random.randint(3, 5)):
+        for i in range(random.randint(4, 7)):
             radius = random.randint(40, 90)
             position = [random.randint(0, self.width - radius), random.randint(0, self.height - radius)]
             obstacles.append(CircleObstacle(colour, position[0], position[1], radius))
@@ -230,7 +243,7 @@ class Game:
     def drawBorder(self):
         # top line
         line_width = 10
-        colour = RED
+        colour = BLUE
         width = self.width
         height = self.height
         # top line
