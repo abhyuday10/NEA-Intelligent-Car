@@ -1,5 +1,7 @@
-import numpy as np
 import math
+import random
+
+import numpy as np
 
 
 class Connection:
@@ -63,10 +65,10 @@ class Neuron:
 class Network:
     def __init__(self, topology):
         self.layers = []
-        layerNumber=0
+        layerNumber = 0
         for layerNum in range(len(topology)):
-            layerNumber+=1
-            print(layerNumber)
+            layerNumber += 1
+            # print(layerNumber)
             layer = []
             for i in range(topology[layerNum]):
                 if len(self.layers) == 0:
@@ -74,12 +76,11 @@ class Network:
                 else:
                     layer.append(Neuron(self.layers[-1]))
 
-            if not (layerNumber)>=len(topology):
+            if not (layerNumber) >= len(topology):
                 layer.append(Neuron(None))  # bias neuron
                 layer[-1].setOutput(1)  # setting output of bias neuron as 1
 
             self.layers.append(layer)
-
 
     def printNetStruct(self):
         struct = []
@@ -97,6 +98,24 @@ class Network:
                 for dendron in neuron.dendrons:
                     layers.append(dendron.weight)
         print(layers)
+
+    def getNetWeights(self):
+        layers = []
+        for layer in self.layers:
+            for neuron in layer:
+                for dendron in neuron.dendrons:
+                    layers.append(dendron.weight)
+        return layers
+
+    def setNetWeights(self, weights):
+        i = 0
+        for layer in self.layers:
+            for neuron in layer:
+                for dendron in neuron.dendrons:
+                    if i > len(weights) - 1:
+                        return
+                    dendron.weight = weights[i]
+                    i += 1
 
     def setInputs(self, inputs):
         for i in range(len(inputs)):
@@ -177,4 +196,18 @@ def main():
         print(net.getThResults())
 
 
-main()
+# def randomiseWeights(weights):
+#     for i in range(len(weights) - 1):
+#         weights[i] = (random.uniform(-1, 1))
+#     print(weights)
+#     return weights
+
+
+# main()
+# nn = Network([2, 2])
+# weights = nn.getNetWeights()
+# print(weights)
+#
+# randomiseWeights(weights)
+# nn.setNetWeights(weights)
+# print(nn.getNetWeights())
