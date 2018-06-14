@@ -13,7 +13,7 @@ GRAY = (169, 169, 169)
 
 
 class Car(pygame.sprite.Sprite):
-    DELTA_ANGLE = 2
+    DELTA_ANGLE = 2.5
     SPEED = 5
 
     def __init__(self, x, y):
@@ -50,7 +50,6 @@ class Car(pygame.sprite.Sprite):
         self.angle = (self.angle + self.DELTA_ANGLE) % -360
 
     def move_forward(self):
-        print(self.pos)
         dx = math.cos(math.radians(self.angle + 90))
         dy = math.sin(math.radians(self.angle + 90))
 
@@ -207,7 +206,6 @@ class Game:
         self.car.obstacles = self.obstacles
 
         self.car.borders = self.drawBorder()
-
         self.main_loop()
 
     def check_if_circles_overlap(self, x, y, r, a, b, t):
@@ -243,7 +241,7 @@ class Game:
     def drawBorder(self):
         # top line
         line_width = 10
-        colour = BLUE
+        colour = RED
         width = self.width
         height = self.height
         # top line
@@ -273,7 +271,7 @@ class Game:
 
     def main_loop(self):
 
-        while 1:
+        while not self.car.crashed:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: sys.exit()
 
