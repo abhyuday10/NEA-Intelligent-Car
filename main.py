@@ -1,17 +1,18 @@
 '''GENETIC CONTROLLER'''
 import genetic_algorithm as ga
+import game_model as game
+import neural_net as nn
 
 
-CHROMOSOME_LENGTH = 40
-CROSSOVER_RATE = 0.7
-MUTATION_RATE = 0.001
+
 POOL_SIZE = 400
 TARGET_TIME = 60
+TOPOLOGY=[5,2,1]
 
 
 def main():
     # Generate Population
-    population = ga.generate_population()
+    population = ga.generate_population(TOPOLOGY)
 
     # Check for solution
     generation = 0
@@ -20,8 +21,7 @@ def main():
     while (not solution_found):
         # Evaluate population fitness
         for chromosome in population:
-            chromosome.set_self_result()
-            chromosome.set_self_fitness()
+
 
         # Find best Chromosome and show info
         bestChromosome = population[0]

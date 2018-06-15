@@ -2,42 +2,50 @@ import random
 
 import neural_net as nn
 
+CHROMOSOME_LENGTH = 40
+CROSSOVER_RATE = 0.7
+MUTATION_RATE = 0.001
+
 
 class Chromosome():
-    def __init__(self):
-        self.brain = nn.Network(NETWORK_STRUCTURE)
+    def __init__(self, topology):
+        self.brain = nn.Network(topology)
         self.weights = self.brain.getNetWeights()
+        self.fitness = None
+
+    def setWeights(self, weights):
+        self.brain.setNetWeights(weights)
+        self.weights = weights
 
 
-def generate_population(POOL_SIZE,):
+def generate_population(POOL_SIZE, topology):
     pool = []
-    for chrom in range(POOL_SIZE):
-
-
+    for chrom in range(POOL_SIZE - 1):
+        member = Chromosome(topology)
+        pool.append(member)
     return pool
 
 
 def breed_two_chromosomes(first, second):
     if random.uniform(0, 1) <= CROSSOVER_RATE:
-        crossover = random.randrange(0, len(first.code))
-        # print("Original: ",first.code)
-        offspring1 = Chromosome(genes=None, code=(first.code[0: crossover] + second.code[crossover:]))
-        # print("Final:    ",offspring1.code)
-        return [offspring1]
+        crossover = random.randrange(0, len(first.weights))
+        topology = first.topology
+        offspringWeights = first.weights[0: crossover] + second.weights[crossover:]
+
+        offspring = Chromosome(topology)
+        offspring.setWeights(offspringWeights)
+
+        return offspring
     else:
         return [first, second]
 
 
 def mutate(chromosome):
-    chromoList = list(chromosome.code)
-    for i in range(0, len(chromoList)):
+    weights = chromosome.weights
+    for i in range(0, len(weights) - 1):
         if random.uniform(0, 1) <= MUTATION_RATE:
-            cellIndex = random.randint(0, len(chromoList) - 1)
-            if chromoList[cellIndex] == "0":
-                chromoList[cellIndex] = "1"
-            elif chromoList[cellIndex] == "1":
-                chromoList[cellIndex] = "0"
-    chromosome.code = "".join(chromoList)
+            weights[i] = weights[i] * random.uniform(0.5, 1.5)
+    chromosome.setWeights(weights)
     return chromosome
 
 

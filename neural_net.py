@@ -65,6 +65,7 @@ class Neuron:
 class Network:
     def __init__(self, topology):
         self.layers = []
+        self.topology=topology
         layerNumber = 0
         for layerNum in range(len(topology)):
             layerNumber += 1
