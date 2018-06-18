@@ -176,7 +176,7 @@ class Game:
         self.cars = []
         for chromosome in chromosomeList:
             self.cars.append(Car(chromosome, self.carStartPos[0], self.carStartPos[1]))
-        print("here")
+
         self.set_borders()
         self.main_loop()
 
@@ -244,6 +244,7 @@ class Game:
             obstacle.draw_to_screen(self.screen)
 
     def draw_cars(self):
+        print(len(self.cars))
         for car in self.cars:
             car.update()
             car.draw()
@@ -251,6 +252,7 @@ class Game:
     def draw(self):
         self.drawObstacles()
         self.createBorders()
+        self.draw_cars()
 
     def main_loop(self):
         while self.running:

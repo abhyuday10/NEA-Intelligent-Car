@@ -20,7 +20,7 @@ class Chromosome():
 
 def generate_population(POOL_SIZE, topology):
     pool = []
-    for chrom in range(POOL_SIZE - 1):
+    for chrom in range(POOL_SIZE):
         member = Chromosome(topology)
         pool.append(member)
     return pool
