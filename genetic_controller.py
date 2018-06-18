@@ -1,18 +1,15 @@
 '''GENETIC CONTROLLER'''
+import environment as game
 import genetic_algorithm as ga
-import game_model as game
-import neural_net as nn
 
-
-
-POOL_SIZE = 400
+POOL_SIZE = 1
 TARGET_TIME = 60
-TOPOLOGY=[5,2,1]
+TOPOLOGY = [5, 2, 1]
 
 
 def main():
     # Generate Population
-    population = ga.generate_population(TOPOLOGY)
+    population = ga.generate_population(POOL_SIZE, TOPOLOGY)
 
     # Check for solution
     generation = 0
@@ -20,8 +17,7 @@ def main():
 
     while (not solution_found):
         # Evaluate population fitness
-        for chromosome in population:
-
+        gameState = game.Game(population)
 
         # Find best Chromosome and show info
         bestChromosome = population[0]
@@ -29,7 +25,7 @@ def main():
             if chromosome.fitness > bestChromosome.fitness:
                 bestChromosome = chromosome
 
-        # TODO: Calculate and display normalised generation fitness
+        # TODO: Calculate and display normalised generation fitness using softmax
         total_population_fitness = 0
         for i in population:
             total_population_fitness += i.fitness

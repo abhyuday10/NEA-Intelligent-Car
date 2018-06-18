@@ -2,7 +2,7 @@ import random
 
 import neural_net as nn
 
-CHROMOSOME_LENGTH = 40
+
 CROSSOVER_RATE = 0.7
 MUTATION_RATE = 0.001
 
