@@ -124,7 +124,7 @@ class Car(pygame.sprite.Sprite):
     def get_sonar_readings(self, x, y, angle):
         readings = []
 
-        # Make our arms.
+        # Make our arms.Capi
         arm_left = self.make_sonar_arm(x, y)
         arm_middle = arm_left
         arm_right = arm_left
@@ -177,8 +177,6 @@ class Game:
         self.obstacles = self.generateObstacles()
         self.borders = self.createBorders()
 
-
-
         self.cars = self.generateCars(chromosomeList)
 
         self.set_borders()
@@ -201,9 +199,8 @@ class Game:
             radius = random.randint(30, 70)
             position = [random.randint(0, self.width - radius), random.randint(0, self.height - radius)]
             if not self.check_if_circle_overlaps(position[0], position[1], radius, obstacles):
-                if not self.circle_rect_collision(self.spawnrect[0], self.height-self.spawnrect[1], self.spawnrect[2],
+                if not self.circle_rect_collision(self.spawnrect[0], self.height - self.spawnrect[1], self.spawnrect[2],
                                                   self.spawnrect[3], position[0], position[1], radius):
-
                     obstacles.append(CircleObstacle(colour, position[0], position[1], radius))
 
         return obstacles
@@ -212,30 +209,22 @@ class Game:
                               center_x, center_y, radius):  # circle definition
         """ Detect collision between a rectangle and circle. """
 
-        # complete boundbox of the rectangle
-        rright, rbottom = rleft + width / 2, rtop + height / 2
+        distX = abs(center_x - rleft - width / 2)
+        distY = abs(center_y - rtop - height / 2)
 
-        # bounding box of the circle
-        cleft, ctop = center_x - radius, center_y - radius
-        cright, cbottom = center_x + radius, center_y + radius
+        if (distX > (width / 2 + radius)):
+            return False
+        if (distY > (height / 2 + radius)):
+            return False
 
-        # trivial reject if bounding boxes do not intersect
-        if rright < cleft or rleft > cright or rbottom < ctop or rtop > cbottom:
-            return False  # no collision possible
+        if (distX <= (width / 2)):
+            return True
+        if (distY <= (height / 2)):
+            return True
 
-        # check whether any point of rectangle is inside circle's radius
-        for x in (rleft, rleft + width):
-            for y in (rtop, rtop + height):
-                # compare distance between circle's center point and each point of
-                # the rectangle with the circle's radius
-                if math.hypot(x - center_x, y - center_y) <= radius:
-                    return True  # collision detected
-
-        # check if center of circle is inside rectangle
-        if rleft <= center_x <= rright and rtop <= center_y <= rbottom:
-            return True  # overlaid
-
-        return False  # no collision detected
+        dx = distX - width / 2
+        dy = distY - height / 2
+        return (dx * dx + dy * dy <= (radius * radius))
 
     def check_if_circle_overlaps(self, x, y, r, other_obstacles):
         for obstacle in other_obstacles:
