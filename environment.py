@@ -169,16 +169,28 @@ class Game:
     def __init__(self, chromosomeList):
         self.running = True
 
+        rectx = 200
+        recty = 400
+        self.spawnrect = [(self.width / 2) - rectx / 2, (self.height / 2) + recty / 20, rectx, recty]
+        print(self.spawnrect)
+
         self.obstacles = self.generateObstacles()
         self.borders = self.createBorders()
 
-        # Generate cars, passing in their unique network
-        self.cars = []
-        for chromosome in chromosomeList:
-            self.cars.append(Car(chromosome, self.carStartPos[0], self.carStartPos[1]))
+
+
+        self.cars = self.generateCars(chromosomeList)
 
         self.set_borders()
         self.main_loop()
+
+    def generateCars(self, chromosomeList):
+        # Generate cars, passing in their unique network
+        cars = []
+        for chromosome in chromosomeList:
+            cars.append(Car(chromosome, self.carStartPos[0], self.carStartPos[1]))
+
+        return cars
 
     def generateObstacles(self):
         obstacles = []
@@ -189,9 +201,41 @@ class Game:
             radius = random.randint(30, 70)
             position = [random.randint(0, self.width - radius), random.randint(0, self.height - radius)]
             if not self.check_if_circle_overlaps(position[0], position[1], radius, obstacles):
-                obstacles.append(CircleObstacle(colour, position[0], position[1], radius))
+                if not self.circle_rect_collision(self.spawnrect[0], self.height-self.spawnrect[1], self.spawnrect[2],
+                                                  self.spawnrect[3], position[0], position[1], radius):
+
+                    obstacles.append(CircleObstacle(colour, position[0], position[1], radius))
 
         return obstacles
+
+    def circle_rect_collision(self, rleft, rtop, width, height,  # rectangle definition
+                              center_x, center_y, radius):  # circle definition
+        """ Detect collision between a rectangle and circle. """
+
+        # complete boundbox of the rectangle
+        rright, rbottom = rleft + width / 2, rtop + height / 2
+
+        # bounding box of the circle
+        cleft, ctop = center_x - radius, center_y - radius
+        cright, cbottom = center_x + radius, center_y + radius
+
+        # trivial reject if bounding boxes do not intersect
+        if rright < cleft or rleft > cright or rbottom < ctop or rtop > cbottom:
+            return False  # no collision possible
+
+        # check whether any point of rectangle is inside circle's radius
+        for x in (rleft, rleft + width):
+            for y in (rtop, rtop + height):
+                # compare distance between circle's center point and each point of
+                # the rectangle with the circle's radius
+                if math.hypot(x - center_x, y - center_y) <= radius:
+                    return True  # collision detected
+
+        # check if center of circle is inside rectangle
+        if rleft <= center_x <= rright and rtop <= center_y <= rbottom:
+            return True  # overlaid
+
+        return False  # no collision detected
 
     def check_if_circle_overlaps(self, x, y, r, other_obstacles):
         for obstacle in other_obstacles:
@@ -244,12 +288,12 @@ class Game:
             obstacle.draw_to_screen(self.screen)
 
     def draw_cars(self):
-        print(len(self.cars))
         for car in self.cars:
             car.update()
             car.draw()
 
     def draw(self):
+        pygame.draw.rect(self.screen, GRAY, self.spawnrect)
         self.drawObstacles()
         self.createBorders()
         self.draw_cars()
@@ -278,6 +322,5 @@ class Game:
 
             pygame.display.flip()
             self.clock.tick(60)
-
 
 # Game([])
