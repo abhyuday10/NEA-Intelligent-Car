@@ -81,7 +81,7 @@ class Car(pygame.sprite.Sprite):
         return self.chromosome.brain.getDiscreteResults()
 
     def calculate_fitness(self, time):
-        fitness = 10 * time
+        fitness = time
         self.chromosome.fitness = fitness
 
     def draw(self):
@@ -168,12 +168,12 @@ class Car(pygame.sprite.Sprite):
         return readings
 
     def make_sonar_arm(self, x, y):
-        spread = 8  # Default spread.
+        spread = 16  # Default spread.
         distance = 20  # Gap before first sensor.
         arm_points = []
         # Make an arm. We build it flat because we'll rotate it about the
         # center later.
-        for i in range(1, 30):
+        for i in range(1, 15):
             arm_points.append((distance + x + (spread * i), y))
         return arm_points
 
@@ -209,6 +209,7 @@ class Game:
         self.borders = self.createBorders()
 
         self.cars = self.generateCars(chromosomeList)
+        self.evaluatedCars=[]
 
         self.set_borders()
         self.main_loop()
@@ -228,7 +229,7 @@ class Game:
         numberofObstacles = random.randint(7, 12)
 
         while len(obstacles) < numberofObstacles:
-            radius = random.randint(30, 70)
+            radius = random.randint(40, 80)
             position = [random.randint(0, self.width - radius), random.randint(0, self.height - radius)]
             if not self.check_if_circle_overlaps(position[0], position[1], radius, obstacles):
                 if not self.circle_rect_collision(self.spawnrect[0], self.height - self.spawnrect[1], self.spawnrect[2],
@@ -338,8 +339,8 @@ class Game:
                 car.set_inputs(car.inputs)
                 car.feedforward()
                 car.output = car.get_outputs()
-                print(car.chromosome.brain.getResults())
-            print(" ")
+                # print(car.chromosome.brain.getResults())
+            # print(" ")
 
             for car in self.cars:
                 if car.output[0] == "left":
@@ -351,11 +352,17 @@ class Game:
             for car in self.cars:
                 if car.crashed:
                     car.calculate_fitness(time)
+                    car.chromosome.time=time
+                    self.evaluatedCars.append(car)
                     self.cars.remove(car)
 
 
-            # if len(self.cars) == 0 or time > 50:
-            #     return self.cars
+            if len(self.cars) == 0 or time > 100:
+                for car in self.cars:
+                    car.calculate_fitness(time)
+                    car.chromosome.time=time
+                    self.evaluatedCars.append(car)
+                return self.cars
 
             self.draw()
             # self.draw()

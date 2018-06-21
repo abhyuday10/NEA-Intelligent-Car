@@ -2,16 +2,17 @@ import random
 
 import neural_net as nn
 
-
 CROSSOVER_RATE = 0.7
 MUTATION_RATE = 0.001
 
 
 class Chromosome():
     def __init__(self, topology):
+        self.topology = topology
         self.brain = nn.Network(topology)
         self.weights = self.brain.getNetWeights()
         self.fitness = None
+        self.time = 0
 
     def setWeights(self, weights):
         self.brain.setNetWeights(weights)
@@ -35,7 +36,7 @@ def breed_two_chromosomes(first, second):
         offspring = Chromosome(topology)
         offspring.setWeights(offspringWeights)
 
-        return offspring
+        return [offspring]
     else:
         return [first, second]
 

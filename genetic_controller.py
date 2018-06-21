@@ -3,8 +3,8 @@ import environment as game
 import genetic_algorithm as ga
 
 POOL_SIZE = 10
-TARGET_TIME = 60
-TOPOLOGY = [5, 3, 1]
+TARGET_TIME = 6000
+TOPOLOGY = [5, 6, 1]
 
 
 def main():
@@ -21,6 +21,11 @@ def main():
 
         # Find best Chromosome and show info
         bestChromosome = population[0]
+
+        for chromosome in population:
+            print(chromosome.fitness)
+
+
         for chromosome in population:
             if chromosome.fitness > bestChromosome.fitness:
                 bestChromosome = chromosome
@@ -34,12 +39,14 @@ def main():
         print("Generation: ", generation)
         print("Average generation fitness: ", avg_fitness)
         print('Target Number: ' + str(TARGET_TIME))
-        print("Best Chromosome: ", bestChromosome.formula, " = ", bestChromosome.time)
+        print("Best Chromosome: ", bestChromosome, " = ", bestChromosome.time)
         print("")
 
         if bestChromosome.time >= TARGET_TIME:
             solution_found = True
             print("SUCCESS!!")
+        else:
+            print("Solution criteria not met, producing new population")
 
         # Breed new generation
         new_population = []
@@ -48,8 +55,8 @@ def main():
             parent1 = ga.choose_parent(population)
             parent2 = ga.choose_parent(population)
 
-            while parent2.time == parent1.time:
-                parent2 = ga.choose_parent(population)
+            # while parent2.time == parent1.time:
+            #     parent2 = ga.choose_parent(population)
 
             childs = ga.breed_two_chromosomes(parent1, parent2)
             for child in childs:
