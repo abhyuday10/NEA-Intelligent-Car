@@ -2,7 +2,7 @@
 import environment as game
 import genetic_algorithm as ga
 
-POOL_SIZE = 1
+POOL_SIZE = 10
 TARGET_TIME = 60
 TOPOLOGY = [5, 2, 1]
 

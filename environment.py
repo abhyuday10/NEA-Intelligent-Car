@@ -53,10 +53,32 @@ class Car(pygame.sprite.Sprite):
         self.inputs = None
         self.output = None
 
+    def rotate_right(self):
+        self.angle = (self.angle - self.DELTA_ANGLE) % -360
+
+    def rotate_left(self):
+        self.angle = (self.angle + self.DELTA_ANGLE) % -360
+
+    def move_forward(self):
+        dx = math.cos(math.radians(self.angle + 90))
+        dy = math.sin(math.radians(self.angle + 90))
+
+        self.pos = self.pos[0] + (dx * self.SPEED), self.pos[1] - (dy * self.SPEED)
+        self.rect.center = self.pos
+
     def update(self):
         self.inputs = self.get_sonar_readings(self.rect.center[0], self.rect.center[1],
                                               math.radians(abs(self.angle) - 90))
         self.crashed = self.check_if_crashed()
+
+    def set_inputs(self, inputs):
+        self.chromosome.brain.setInputs(inputs)
+
+    def feedforward(self):
+        self.chromosome.brain.feedForward()
+
+    def get_outputs(self):
+        return self.chromosome.brain.getDiscreteResults()
 
     def draw(self):
         self.image = pygame.transform.rotate(self.orig_image, self.angle)
@@ -121,6 +143,9 @@ class Car(pygame.sprite.Sprite):
     def check_inside_circle(self, x, y, a, b, r):
         return (x - a) * (x - a) + (y - b) * (y - b) < r * r
 
+    def get_sensor_data(self):
+        return self.get_sonar_readings(self.rect.center[0], self.rect.center[1], math.radians(abs(self.angle) - 90))
+
     def get_sonar_readings(self, x, y, angle):
         readings = []
 
@@ -161,10 +186,8 @@ class Car(pygame.sprite.Sprite):
 
 class Game:
     clock = pygame.time.Clock()
-    screen_size = width, height = 800, 500
+    screen_size = width, height = 1200, 800
     screen = pygame.display.set_mode(screen_size)
-
-    carStartPos = [300, 300]
 
     def __init__(self, chromosomeList):
         self.running = True
@@ -172,7 +195,11 @@ class Game:
         rectx = 200
         recty = 400
         self.spawnrect = [(self.width / 2) - rectx / 2, (self.height / 2) + recty / 20, rectx, recty]
-        print(self.spawnrect)
+
+        self.carStartPos = [self.spawnrect[0] + 100, self.spawnrect[1] + 100]
+        # self.carStartPos = [random.randint(self.spawnrect[0], self.spawnrect[0] + self.spawnrect[2]),
+        #                     self.spawnrect[1] + 100]
+        print(self.carStartPos)
 
         self.obstacles = self.generateObstacles()
         self.borders = self.createBorders()
@@ -186,7 +213,8 @@ class Game:
         # Generate cars, passing in their unique network
         cars = []
         for chromosome in chromosomeList:
-            cars.append(Car(chromosome, self.carStartPos[0], self.carStartPos[1]))
+            cars.append(Car(chromosome, random.randint(self.spawnrect[0], self.spawnrect[0] + self.spawnrect[2]),
+                            self.carStartPos[1]))
 
         return cars
 
@@ -296,6 +324,25 @@ class Game:
             self.screen.fill(WHITE)
 
             self.set_obstacles()
+            self.draw()
+
+            # print(len(self.cars))
+
+            for car in self.cars:
+                car.inputs = car.get_sensor_data()
+                car.set_inputs(car.inputs)
+                car.feedforward()
+                car.output = car.get_outputs()
+                # print(car.get_outputs())
+            print(" ")
+
+            for car in self.cars:
+                if car.output[0] == "left":
+                    car.rotate_left()
+                elif car.output[0] == "right":
+                    car.rotate_right()
+                car.move_forward()
+
             self.draw()
 
             # Do all drawing and stuff here:

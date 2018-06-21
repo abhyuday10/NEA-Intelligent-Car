@@ -146,19 +146,20 @@ class Network:
 
     def getResults(self):
         output = []
+        print(len(self.layers[-1]))
         for neuron in self.layers[-1]:
             output.append(neuron.getOutput())
         return output
 
-    def getThResults(self):
+    def getDiscreteResults(self):
         output = []
-        print(len(self.layers[-1]))
+        # print(len(self.layers[-1]))
         for neuron in self.layers[-1]:
             o = neuron.getOutput()
             if o > 0.5:
-                o = 1
+                o = "right"
             else:
-                o = 0
+                o = "left"
             output.append(o)
         return output
 
