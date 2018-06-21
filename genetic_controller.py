@@ -4,7 +4,7 @@ import genetic_algorithm as ga
 
 POOL_SIZE = 10
 TARGET_TIME = 60
-TOPOLOGY = [5, 2, 1]
+TOPOLOGY = [5, 3, 1]
 
 
 def main():

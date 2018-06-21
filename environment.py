@@ -80,6 +80,10 @@ class Car(pygame.sprite.Sprite):
     def get_outputs(self):
         return self.chromosome.brain.getDiscreteResults()
 
+    def calculate_fitness(self, time):
+        fitness = 10 * time
+        self.chromosome.fitness = fitness
+
     def draw(self):
         self.image = pygame.transform.rotate(self.orig_image, self.angle)
         self.rect = self.image.get_rect(center=self.rect.center)
@@ -221,7 +225,7 @@ class Game:
     def generateObstacles(self):
         obstacles = []
         colour = BLUE
-        numberofObstacles = random.randint(4, 7)
+        numberofObstacles = random.randint(7, 12)
 
         while len(obstacles) < numberofObstacles:
             radius = random.randint(30, 70)
@@ -310,13 +314,15 @@ class Game:
             car.draw()
 
     def draw(self):
-        pygame.draw.rect(self.screen, GRAY, self.spawnrect)
+        # pygame.draw.rect(self.screen, GRAY, self.spawnrect)
         self.drawObstacles()
         self.createBorders()
         self.draw_cars()
 
     def main_loop(self):
+        time = 0
         while self.running:
+            time += 1
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: sys.exit()
 
@@ -324,7 +330,6 @@ class Game:
             self.screen.fill(WHITE)
 
             self.set_obstacles()
-            self.draw()
 
             # print(len(self.cars))
 
@@ -333,7 +338,7 @@ class Game:
                 car.set_inputs(car.inputs)
                 car.feedforward()
                 car.output = car.get_outputs()
-                # print(car.get_outputs())
+                print(car.chromosome.brain.getResults())
             print(" ")
 
             for car in self.cars:
@@ -343,7 +348,17 @@ class Game:
                     car.rotate_right()
                 car.move_forward()
 
+            for car in self.cars:
+                if car.crashed:
+                    car.calculate_fitness(time)
+                    self.cars.remove(car)
+
+
+            # if len(self.cars) == 0 or time > 50:
+            #     return self.cars
+
             self.draw()
+            # self.draw()
 
             # Do all drawing and stuff here:
             # set obstacles for cars

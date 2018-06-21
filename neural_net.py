@@ -146,7 +146,7 @@ class Network:
 
     def getResults(self):
         output = []
-        print(len(self.layers[-1]))
+        # print(len(self.layers[-1]))
         for neuron in self.layers[-1]:
             output.append(neuron.getOutput())
         return output
