@@ -1,5 +1,4 @@
 import math
-import random
 
 import numpy as np
 
@@ -12,7 +11,7 @@ class Connection:
 
 
 class Neuron:
-    eta = 0.09
+    eta = 0.1
     alpha = 0.015
 
     def __init__(self, prev_layer):
@@ -65,7 +64,7 @@ class Neuron:
 class Network:
     def __init__(self, topology):
         self.layers = []
-        self.topology=topology
+        self.topology = topology
         layerNumber = 0
         for layerNum in range(len(topology)):
             layerNumber += 1
@@ -152,51 +151,52 @@ class Network:
         return output
 
     def getDiscreteResults(self):
-        output = []
         # print(len(self.layers[-1]))
-        for neuron in self.layers[-1]:
-            o = neuron.getOutput()
-            if o > 0.5:
-                o = "right"
-            else:
-                o = "left"
-            output.append(o)
-        return output
+        # for neuron in self.layers[-1]:
+        #     o = neuron.getOutput()
+        #     if o > 0.5:
+        #         o = "right"
+        #     else:
+        #         o = "left"
+        #     output.append(o)
+        print([self.layers[-1][0].getOutput(),self.layers[-1][1].getOutput()])
+        if self.layers[-1][0].getOutput() > self.layers[-1][1].getOutput():
+            return "left"
+        elif self.layers[-1][0].getOutput() < self.layers[-1][1].getOutput():
+            return "right"
 
-
-def main():
-    print("Started Network Training")
-    topology = [2, 3, 2]
-    net = Network(topology)
-    Neuron.eta = 0.09
-    Neuron.alpha = 0.015
-
-    inputs = [[0, 0], [0, 1], [1, 0], [1, 1]]
-    outputs = [[0, 0], [1, 1], [1, 0], [0, 1]]
-    net.printNetStruct()
-    for layer in net.layers:
-        print(len(layer))
-    while 1:
-        # time.sleep(1)
-        error = 0
-        for i in range(len(inputs)):
-            net.setInputs(inputs[i])
-            net.feedForward()
-            net.backPropagate(outputs[i])
-            error = error + net.getError(outputs[i])
-
-        # net.printNet()
-        print("error: ", error)
-        if error < 0.01:
-            break
-
-    while True:
-        a = input("Enter A: \n")
-        b = input("Enter B: \n")
-        net.setInputs([float(a), float(b)])
-        net.feedForward()
-        print(net.getThResults())
-
+# def main():
+#     print("Started Network Training")
+#     topology = [2, 3, 2]
+#     net = Network(topology)
+#     Neuron.eta = 0.09
+#     Neuron.alpha = 0.015
+#
+#     inputs = [[0, 0], [0, 1], [1, 0], [1, 1]]
+#     outputs = [[0, 0], [1, 1], [1, 0], [0, 1]]
+#     net.printNetStruct()
+#     for layer in net.layers:
+#         print(len(layer))
+#     while 1:
+#         # time.sleep(1)
+#         error = 0
+#         for i in range(len(inputs)):
+#             net.setInputs(inputs[i])
+#             net.feedForward()
+#             net.backPropagate(outputs[i])
+#             error = error + net.getError(outputs[i])
+#
+#         # net.printNet()
+#         print("error: ", error)
+#         if error < 0.01:
+#             break
+#
+#     while True:
+#         a = input("Enter A: \n")
+#         b = input("Enter B: \n")
+#         net.setInputs([float(a), float(b)])
+#         net.feedForward()
+#         print(net.getThResults())
 
 # def randomiseWeights(weights):
 #     for i in range(len(weights) - 1):

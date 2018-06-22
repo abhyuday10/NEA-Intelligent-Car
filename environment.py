@@ -203,13 +203,13 @@ class Game:
         self.carStartPos = [self.spawnrect[0] + 100, self.spawnrect[1] + 100]
         # self.carStartPos = [random.randint(self.spawnrect[0], self.spawnrect[0] + self.spawnrect[2]),
         #                     self.spawnrect[1] + 100]
-        print(self.carStartPos)
+        # print(self.carStartPos)
 
         self.obstacles = self.generateObstacles()
         self.borders = self.createBorders()
 
         self.cars = self.generateCars(chromosomeList)
-        self.evaluatedCars=[]
+        self.evaluatedCars = []
 
         self.set_borders()
         self.main_loop()
@@ -218,7 +218,7 @@ class Game:
         # Generate cars, passing in their unique network
         cars = []
         for chromosome in chromosomeList:
-            cars.append(Car(chromosome, random.randint(self.spawnrect[0], self.spawnrect[0] + self.spawnrect[2]),
+            cars.append(Car(chromosome, self.carStartPos[0],
                             self.carStartPos[1]))
 
         return cars
@@ -229,6 +229,13 @@ class Game:
         numberofObstacles = random.randint(7, 12)
 
         while len(obstacles) < numberofObstacles:
+            position = [int(self.spawnrect[0]-80), int(self.spawnrect[1])]
+            obstacles.append(CircleObstacle(colour, position[0], position[1], 60))
+
+            position = [int(self.spawnrect[0]+self.spawnrect[2] + 80), int(self.spawnrect[1])]
+            obstacles.append(CircleObstacle(colour, position[0], position[1], 60))
+
+
             radius = random.randint(40, 80)
             position = [random.randint(0, self.width - radius), random.randint(0, self.height - radius)]
             if not self.check_if_circle_overlaps(position[0], position[1], radius, obstacles):
@@ -336,6 +343,7 @@ class Game:
 
             for car in self.cars:
                 car.inputs = car.get_sensor_data()
+                print(car.inputs)
                 car.set_inputs(car.inputs)
                 car.feedforward()
                 car.output = car.get_outputs()
@@ -343,24 +351,23 @@ class Game:
             # print(" ")
 
             for car in self.cars:
-                if car.output[0] == "left":
+                if car.output == "left":
                     car.rotate_left()
-                elif car.output[0] == "right":
+                elif car.output == "right":
                     car.rotate_right()
                 car.move_forward()
 
             for car in self.cars:
                 if car.crashed:
                     car.calculate_fitness(time)
-                    car.chromosome.time=time
+                    car.chromosome.time = time
                     self.evaluatedCars.append(car)
                     self.cars.remove(car)
 
-
-            if len(self.cars) == 0 or time > 100:
+            if len(self.cars) == 0 or time > 120:
                 for car in self.cars:
                     car.calculate_fitness(time)
-                    car.chromosome.time=time
+                    car.chromosome.time = time
                     self.evaluatedCars.append(car)
                 return self.cars
 

@@ -4,7 +4,7 @@ import genetic_algorithm as ga
 
 POOL_SIZE = 10
 TARGET_TIME = 6000
-TOPOLOGY = [5, 6, 1]
+TOPOLOGY = [5, 3, 2]
 
 
 def main():
@@ -22,8 +22,8 @@ def main():
         # Find best Chromosome and show info
         bestChromosome = population[0]
 
-        for chromosome in population:
-            print(chromosome.fitness)
+        # for chromosome in population:
+        #     print(chromosome.fitness)
 
 
         for chromosome in population:

@@ -3,7 +3,7 @@ import random
 import neural_net as nn
 
 CROSSOVER_RATE = 0.7
-MUTATION_RATE = 0.001
+MUTATION_RATE = 0.01
 
 
 class Chromosome():
