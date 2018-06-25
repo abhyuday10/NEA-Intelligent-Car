@@ -72,6 +72,7 @@ class Car(pygame.sprite.Sprite):
     def update(self):
         self.inputs = self.get_sonar_readings(self.rect.center[0], self.rect.center[1],
                                               math.radians(abs(self.angle) - 90))
+        self.mask = pygame.mask.from_surface(self.image)
         self.crashed = self.check_if_crashed()
 
     def set_inputs(self, inputs):
@@ -107,12 +108,14 @@ class Car(pygame.sprite.Sprite):
             ofsettedMaskPoint = [0, 0]
             ofsettedMaskPoint[0] = point[0] + self.rect[0]
             ofsettedMaskPoint[1] = point[1] + self.rect[1]
-            pygame.draw.circle(Game.screen,GREEN,ofsettedMaskPoint,2)
+
+            # pygame.draw.circle(Game.screen, GREEN, ofsettedMaskPoint, 2)
+
             if self.check_if_point_in_any_obstacle(ofsettedMaskPoint) or self.check_if_point_in_any_border(
                     ofsettedMaskPoint):
                 adjustedRect = [ofsettedMaskPoint[0] - 25, ofsettedMaskPoint[1] - 25]
-                # Game.screen.blit(self.boom, adjustedRect)
-                pygame.draw.circle(Game.screen, RED, ofsettedMaskPoint, 5)
+                Game.screen.blit(self.boom, adjustedRect)
+                # pygame.draw.circle(Game.screen, RED, ofsettedMaskPoint, 5)
                 return True
         return False
 
