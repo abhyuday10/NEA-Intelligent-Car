@@ -258,13 +258,13 @@ class Game:
     def generateObstacles(self):
         obstacles = []
         colour = BLUE
-        numberofObstacles = random.randint(3, 7)
+        numberofObstacles = random.randint(4, 9)
 
         position = [int(self.spawnrect[0] - 80), int(self.spawnrect[1])]
-        obstacles.append(CircleObstacle(colour, position[0], position[1], [0, 0], 60))
+        obstacles.append(CircleObstacle(colour, position[0], position[1], [1, 0], 60))
 
         position = [int(self.spawnrect[0] + self.spawnrect[2] + 80), int(self.spawnrect[1])]
-        obstacles.append(CircleObstacle(colour, position[0], position[1], [0, 0], 60))
+        obstacles.append(CircleObstacle(colour, position[0], position[1], [-1, 0], 60))
 
         while len(obstacles) < numberofObstacles:
 
