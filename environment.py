@@ -13,7 +13,10 @@ GRAY = (169, 169, 169)
 
 
 class CircleObstacle():
-    def __init__(self, colour, x, y, radius):
+    def __init__(self, colour, x, y, move, radius):
+        self.moveX = move[0]
+        self.moveY = move[1]
+
         self.colour = colour
         self.pos = [x, y]
         self.radius = radius
@@ -23,17 +26,17 @@ class CircleObstacle():
 
 
 class Car(pygame.sprite.Sprite):
-    DELTA_ANGLE = 2.5
+    DELTA_ANGLE = 3.5
     SPEED = 5
 
     def __init__(self, chromosome, x, y):
         pygame.sprite.Sprite.__init__(self)
 
-        self.boom = pygame.image.load("boom.png")
+        self.boom = pygame.image.load("boom.png").convert_alpha()
         self.boom = pygame.transform.scale(self.boom, (50, 50))
 
-        self.image = pygame.image.load("car.png")
-        self.image = pygame.transform.scale(self.image, (60, 120))
+        self.image = pygame.image.load("car.png").convert_alpha()
+        self.image = pygame.transform.scale(self.image, (30, 60))
         self.orig_image = self.image
 
         self.mask = pygame.mask.from_surface(self.image)
@@ -81,7 +84,7 @@ class Car(pygame.sprite.Sprite):
         return self.chromosome.brain.getDiscreteResults()
 
     def calculate_fitness(self, time):
-        fitness = time
+        fitness = math.pow(time, 2)
         self.chromosome.fitness = fitness
 
     def draw(self):
@@ -90,15 +93,26 @@ class Car(pygame.sprite.Sprite):
         Game.screen.blit(self.image, self.rect)
 
     def check_if_crashed(self):
-        for point in self.mask.outline():
+
+        samplePoints = []
+        outlinePoints = self.mask.outline()
+        for i in range(len(outlinePoints)):
+            if i % 10 == 0:
+                samplePoints.append(outlinePoints[i])
+
+        # for point in samplePoints:
+        #     self.image.set_at(point, BLACK)
+
+        for point in samplePoints:
             ofsettedMaskPoint = [0, 0]
             ofsettedMaskPoint[0] = point[0] + self.rect[0]
             ofsettedMaskPoint[1] = point[1] + self.rect[1]
+            pygame.draw.circle(Game.screen,GREEN,ofsettedMaskPoint,2)
             if self.check_if_point_in_any_obstacle(ofsettedMaskPoint) or self.check_if_point_in_any_border(
                     ofsettedMaskPoint):
                 adjustedRect = [ofsettedMaskPoint[0] - 25, ofsettedMaskPoint[1] - 25]
-                Game.screen.blit(self.boom, adjustedRect)
-                # pygame.draw.circle(Game.screen, BLACK, i, 5)
+                # Game.screen.blit(self.boom, adjustedRect)
+                pygame.draw.circle(Game.screen, RED, ofsettedMaskPoint, 5)
                 return True
         return False
 
@@ -223,25 +237,43 @@ class Game:
 
         return cars
 
+    def moveObstacles(self):
+
+        for obstacle in self.obstacles:
+            obstacle.pos[0] += obstacle.moveX
+            obstacle.pos[1] += obstacle.moveY
+
+            if obstacle.pos[0] + obstacle.radius > self.width:
+                obstacle.moveX = obstacle.moveX * -1
+            if obstacle.pos[0] - obstacle.radius < 0:
+                obstacle.moveX = obstacle.moveX * -1
+            if obstacle.pos[1] + obstacle.radius > self.height:
+                obstacle.moveY = obstacle.moveY * -1
+            if obstacle.pos[1] - obstacle.radius < 0:
+                obstacle.moveY = obstacle.moveY * -1
+
     def generateObstacles(self):
         obstacles = []
         colour = BLUE
-        numberofObstacles = random.randint(7, 12)
+        numberofObstacles = random.randint(3, 7)
+
+        position = [int(self.spawnrect[0] - 80), int(self.spawnrect[1])]
+        obstacles.append(CircleObstacle(colour, position[0], position[1], [0, 0], 60))
+
+        position = [int(self.spawnrect[0] + self.spawnrect[2] + 80), int(self.spawnrect[1])]
+        obstacles.append(CircleObstacle(colour, position[0], position[1], [0, 0], 60))
 
         while len(obstacles) < numberofObstacles:
-            position = [int(self.spawnrect[0]-80), int(self.spawnrect[1])]
-            obstacles.append(CircleObstacle(colour, position[0], position[1], 60))
 
-            position = [int(self.spawnrect[0]+self.spawnrect[2] + 80), int(self.spawnrect[1])]
-            obstacles.append(CircleObstacle(colour, position[0], position[1], 60))
-
+            moveX = random.randint(-3, 3)
+            moveY = random.randint(-3, 3)
 
             radius = random.randint(40, 80)
             position = [random.randint(0, self.width - radius), random.randint(0, self.height - radius)]
             if not self.check_if_circle_overlaps(position[0], position[1], radius, obstacles):
                 if not self.circle_rect_collision(self.spawnrect[0], self.height - self.spawnrect[1], self.spawnrect[2],
                                                   self.spawnrect[3], position[0], position[1], radius):
-                    obstacles.append(CircleObstacle(colour, position[0], position[1], radius))
+                    obstacles.append(CircleObstacle(colour, position[0], position[1], [moveX, moveY], radius))
 
         return obstacles
 
@@ -338,12 +370,12 @@ class Game:
             self.screen.fill(WHITE)
 
             self.set_obstacles()
+            self.moveObstacles()
 
             # print(len(self.cars))
 
             for car in self.cars:
                 car.inputs = car.get_sensor_data()
-                print(car.inputs)
                 car.set_inputs(car.inputs)
                 car.feedforward()
                 car.output = car.get_outputs()
@@ -364,7 +396,7 @@ class Game:
                     self.evaluatedCars.append(car)
                     self.cars.remove(car)
 
-            if len(self.cars) == 0 or time > 120:
+            if len(self.cars) == 0 or time > 820:
                 for car in self.cars:
                     car.calculate_fitness(time)
                     car.chromosome.time = time

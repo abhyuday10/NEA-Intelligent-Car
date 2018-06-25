@@ -159,7 +159,7 @@ class Network:
         #     else:
         #         o = "left"
         #     output.append(o)
-        print([self.layers[-1][0].getOutput(),self.layers[-1][1].getOutput()])
+        # print([self.layers[-1][0].getOutput(),self.layers[-1][1].getOutput()])
         if self.layers[-1][0].getOutput() > self.layers[-1][1].getOutput():
             return "left"
         elif self.layers[-1][0].getOutput() < self.layers[-1][1].getOutput():
