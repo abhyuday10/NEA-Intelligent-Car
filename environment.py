@@ -37,7 +37,12 @@ class Car(pygame.sprite.Sprite):
         self.boom = pygame.image.load("boom.png")
         self.boom = pygame.transform.scale(self.boom, (50, 50))
 
-        self.image = pygame.image.load("car.png")
+        if chromosome.fittest:
+            self.image = pygame.image.load("car_fit.png")
+        else:
+            self.image = pygame.image.load("car.png")
+
+
         self.image = pygame.transform.scale(self.image, (30, 60))
         self.orig_image = self.image
 
@@ -360,6 +365,9 @@ class Game:
         for car in self.cars:
             car.update()
             car.draw()
+        for car in self.cars:
+            if car.chromosome.fittest:
+                car.draw()
 
     def drawGUI(self):
         gen_text = tp.OneLineText.make("Generation: " + str(self.generation_number))

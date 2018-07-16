@@ -6,6 +6,10 @@ POOL_SIZE = 20
 TARGET_TIME = 5999
 TOPOLOGY = [5, 3, 2]
 
+def reset_fittest(population):
+    for chrom in population:
+        chrom.fittest=False
+    return population
 
 def main():
     # Generate Population
@@ -25,10 +29,11 @@ def main():
         # for chromosome in population:
         #     print(chromosome.fitness)
 
-
         for chromosome in population:
             if chromosome.fitness > bestChromosome.fitness:
                 bestChromosome = chromosome
+
+        bestChromosome.fittest = True
 
         # TODO: Calculate and display normalised generation fitness using softmax
         total_population_fitness = 0
@@ -60,9 +65,11 @@ def main():
 
             childs = ga.breed_two_chromosomes(parent1, parent2)
             for child in childs:
-                child = ga.mutate(child)
-                new_population.append(child)
+                if child not in population:
+                    child = ga.mutate(child)
+                    new_population.append(child)
 
+        new_population.append(bestChromosome)
         population = new_population
         generation += 1
 

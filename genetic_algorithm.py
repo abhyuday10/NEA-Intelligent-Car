@@ -14,6 +14,8 @@ class Chromosome():
         self.fitness = None
         self.time = 0
 
+        self.fittest=False
+
     def setWeights(self, weights):
         self.brain.setNetWeights(weights)
         self.weights = weights
