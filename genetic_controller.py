@@ -17,7 +17,7 @@ def main():
 
     while (not solution_found):
         # Evaluate population fitness
-        gameState = game.Game(population)
+        gameState = game.Game(population, generation)
 
         # Find best Chromosome and show info
         bestChromosome = population[0]

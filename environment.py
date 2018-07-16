@@ -1,7 +1,7 @@
 import math
 import random
 import sys
-
+import thorpy as tp
 import pygame
 
 BLACK = (0, 0, 0)
@@ -10,6 +10,8 @@ BLUE = (0, 0, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 GRAY = (169, 169, 169)
+
+pygame.init()
 
 
 class CircleObstacle():
@@ -32,10 +34,10 @@ class Car(pygame.sprite.Sprite):
     def __init__(self, chromosome, x, y):
         pygame.sprite.Sprite.__init__(self)
 
-        self.boom = pygame.image.load("boom.png").convert_alpha()
+        self.boom = pygame.image.load("boom.png")
         self.boom = pygame.transform.scale(self.boom, (50, 50))
 
-        self.image = pygame.image.load("car.png").convert_alpha()
+        self.image = pygame.image.load("car.png")
         self.image = pygame.transform.scale(self.image, (30, 60))
         self.orig_image = self.image
 
@@ -85,7 +87,7 @@ class Car(pygame.sprite.Sprite):
         return self.chromosome.brain.getDiscreteResults()
 
     def calculate_fitness(self, time):
-        fitness = math.pow(time, 2)
+        fitness = math.pow(time, 1)
         self.chromosome.fitness = fitness
 
     def draw(self):
@@ -210,7 +212,7 @@ class Game:
     screen_size = width, height = 1200, 800
     screen = pygame.display.set_mode(screen_size)
 
-    def __init__(self, chromosomeList):
+    def __init__(self, chromosomeList, gen):
         self.running = True
 
         rectx = 200
@@ -227,6 +229,9 @@ class Game:
 
         self.cars = self.generateCars(chromosomeList)
         self.evaluatedCars = []
+
+        self.generation_number = gen
+        self.time = 0
 
         self.set_borders()
         self.main_loop()
@@ -356,16 +361,33 @@ class Game:
             car.update()
             car.draw()
 
+    def drawGUI(self):
+        gen_text = tp.OneLineText.make("Generation: " + str(self.generation_number))
+        time_text = tp.OneLineText.make("Time: " + str(self.time))
+        gen_text.set_font_size(20)
+        time_text.set_font_size(20)
+
+        box = tp.Box.make(elements=[gen_text, time_text])
+        menu = tp.Menu(box)
+
+        for element in menu.get_population():
+            element.surface = self.screen
+
+        box.set_topleft(((self.screen_size[0] - box.get_rect()[2])-10, 10))
+        box.blit()
+
     def draw(self):
+
         # pygame.draw.rect(self.screen, GRAY, self.spawnrect)
         self.drawObstacles()
         self.createBorders()
         self.draw_cars()
+        self.drawGUI()
 
     def main_loop(self):
-        time = 0
+        self.time = 0
         while self.running:
-            time += 1
+            self.time += 1
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: sys.exit()
 
@@ -394,15 +416,15 @@ class Game:
 
             for car in self.cars:
                 if car.crashed:
-                    car.calculate_fitness(time)
-                    car.chromosome.time = time
+                    car.calculate_fitness(self.time)
+                    car.chromosome.time = self.time
                     self.evaluatedCars.append(car)
                     self.cars.remove(car)
 
-            if len(self.cars) == 0 or time > 820:
+            if len(self.cars) == 0 or self.time > 820:
                 for car in self.cars:
-                    car.calculate_fitness(time)
-                    car.chromosome.time = time
+                    car.calculate_fitness(self.time)
+                    car.chromosome.time = self.time
                     self.evaluatedCars.append(car)
                 return self.cars
 
