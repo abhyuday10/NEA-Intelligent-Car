@@ -11,6 +11,8 @@ GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 GRAY = (169, 169, 169)
 
+DRAW_SENSORS = True
+
 pygame.init()
 
 
@@ -28,7 +30,7 @@ class CircleObstacle():
 
 
 class Car(pygame.sprite.Sprite):
-    DELTA_ANGLE = 3.5
+    DELTA_ANGLE = 5.5
     SPEED = 5
 
     def __init__(self, chromosome, x, y):
@@ -41,7 +43,6 @@ class Car(pygame.sprite.Sprite):
             self.image = pygame.image.load("car_fit.png")
         else:
             self.image = pygame.image.load("car.png")
-
 
         self.image = pygame.transform.scale(self.image, (30, 60))
         self.orig_image = self.image
@@ -147,7 +148,7 @@ class Car(pygame.sprite.Sprite):
             elif self.check_if_point_in_any_obstacle(rotated_p):
                 return i
 
-            else:
+            elif DRAW_SENSORS:
                 pygame.draw.circle(Game.screen, (BLACK), (rotated_p), 2)
 
         # Return the distance for the arm.
@@ -237,6 +238,8 @@ class Game:
 
         self.generation_number = gen
         self.time = 0
+
+        self.pop_size = len(chromosomeList)
 
         self.set_borders()
         self.main_loop()
@@ -372,16 +375,18 @@ class Game:
     def drawGUI(self):
         gen_text = tp.OneLineText.make("Generation: " + str(self.generation_number))
         time_text = tp.OneLineText.make("Time: " + str(self.time))
+        live_text = tp.OneLineText.make("Cars Alive: " + str(len(self.cars)) + "/" + str(self.pop_size))
+        live_text.set_font_size(18)
         gen_text.set_font_size(20)
         time_text.set_font_size(20)
 
-        box = tp.Box.make(elements=[gen_text, time_text])
+        box = tp.Box.make(elements=[gen_text, time_text, live_text])
         menu = tp.Menu(box)
 
         for element in menu.get_population():
             element.surface = self.screen
 
-        box.set_topleft(((self.screen_size[0] - box.get_rect()[2])-10, 10))
+        box.set_topleft(((self.screen_size[0] - box.get_rect()[2]) - 10, 10))
         box.blit()
 
     def draw(self):
