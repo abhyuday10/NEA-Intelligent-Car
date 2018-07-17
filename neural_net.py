@@ -3,8 +3,8 @@ import numpy as np
 
 
 class Connection:
-    def __init__(self, connectedNeuron):
-        self.connectedNeuron = connectedNeuron
+    def __init__(self, connected_neuron):
+        self.connectedNeuron = connected_neuron
         self.weight = np.random.normal()
 
 
@@ -20,21 +20,21 @@ class Neuron:
                 connection = Connection(neuron)
                 self.dendrons.append(connection)
 
-    def feedForward(self):
-        sumOutput = 0
+    def feed_forward(self):
+        sum_output = 0
         if len(self.dendrons) == 0:
             return
         for connection in self.dendrons:
-            sumOutput += (connection.connectedNeuron.getOutput() * connection.weight)
-        self.output = self.sigmoid(sumOutput)
+            sum_output += (connection.connectedNeuron.get_output() * connection.weight)
+        self.output = self.sigmoid(sum_output)
 
     def sigmoid(self, x):
         return 1 / (1 + math.exp(-x * 1.0))
 
-    def setOutput(self, output):
+    def set_output(self, output):
         self.output = output
 
-    def getOutput(self):
+    def get_output(self):
         return self.output
 
 
@@ -42,9 +42,9 @@ class Network:
     def __init__(self, topology):
         self.layers = []
         self.topology = topology
-        layerNumber = 0
+        layer_number = 0
         for layerNum in range(len(topology)):
-            layerNumber += 1
+            layer_number += 1
             layer = []
             for i in range(topology[layerNum]):
                 if len(self.layers) == 0:
@@ -52,22 +52,22 @@ class Network:
                 else:
                     layer.append(Neuron(self.layers[-1]))
 
-            if not (layerNumber) >= len(topology):
+            if not layer_number >= len(topology):
                 layer.append(Neuron(None))  # bias neuron
-                layer[-1].setOutput(1)  # setting output of bias neuron as 1
+                layer[-1].set_output(1)  # setting output of bias neuron as 1
 
             self.layers.append(layer)
 
-    def printNetStruct(self):
-        struct = []
+    def print_network_structure(self):
+        structure = []
         for layer in self.layers:
             sum = 0
             for neuron in layer:
                 sum += 1
-            struct.append(sum)
-        print(struct)
+            structure.append(sum)
+        print(structure)
 
-    def printNet(self):
+    def print_network_weights(self):
         layers = []
         for layer in self.layers:
             for neuron in layer:
@@ -75,7 +75,7 @@ class Network:
                     layers.append(dendron.weight)
         print(layers)
 
-    def getNetWeights(self):
+    def get_network_weights(self):
         layers = []
         for layer in self.layers:
             for neuron in layer:
@@ -83,7 +83,7 @@ class Network:
                     layers.append(dendron.weight)
         return layers
 
-    def setNetWeights(self, weights):
+    def set_network_weights(self, weights):
         i = 0
         for layer in self.layers:
             for neuron in layer:
@@ -93,23 +93,23 @@ class Network:
                     dendron.weight = weights[i]
                     i += 1
 
-    def setInputs(self, inputs):
+    def set_inputs(self, inputs):
         for i in range(len(inputs)):
-            self.layers[0][i].setOutput(inputs[i])
+            self.layers[0][i].set_output(inputs[i])
 
-    def feedForward(self):
+    def feed_forward(self):
         for layer in self.layers[1:]:
             for neuron in layer:
-                neuron.feedForward()
+                neuron.feed_forward()
 
-    def getResults(self):
+    def get_results(self):
         output = []
         for neuron in self.layers[-1]:
-            output.append(neuron.getOutput())
+            output.append(neuron.get_output())
         return output
 
-    def getDiscreteResults(self):
-        if self.layers[-1][0].getOutput() > self.layers[-1][1].getOutput():
+    def get_decision(self):
+        if self.layers[-1][0].get_output() > self.layers[-1][1].get_output():
             return "left"
-        elif self.layers[-1][0].getOutput() < self.layers[-1][1].getOutput():
+        elif self.layers[-1][0].get_output() < self.layers[-1][1].get_output():
             return "right"

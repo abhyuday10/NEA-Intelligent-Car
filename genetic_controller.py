@@ -1,4 +1,5 @@
-'''GENETIC CONTROLLER'''
+"""GENETIC CONTROLLER"""
+
 import environment as game
 import genetic_algorithm as ga
 
@@ -6,10 +7,12 @@ POOL_SIZE = 20
 TARGET_TIME = 5999
 TOPOLOGY = [5, 3, 2]
 
+
 def reset_fittest(population):
     for chrom in population:
-        chrom.fittest=False
+        chrom.fittest = False
     return population
+
 
 def main():
     # Generate Population
@@ -19,21 +22,21 @@ def main():
     generation = 0
     solution_found = False
 
-    while (not solution_found):
+    while not solution_found:
         # Evaluate population fitness
         gameState = game.Game(population, generation)
 
         # Find best Chromosome and show info
-        bestChromosome = population[0]
+        best_chromosome = population[0]
 
         # for chromosome in population:
         #     print(chromosome.fitness)
 
         for chromosome in population:
-            if chromosome.fitness > bestChromosome.fitness:
-                bestChromosome = chromosome
+            if chromosome.fitness > best_chromosome.fitness:
+                best_chromosome = chromosome
 
-        bestChromosome.fittest = True
+        best_chromosome.fittest = True
 
         # TODO: Calculate and display normalised generation fitness using softmax
         total_population_fitness = 0
@@ -44,10 +47,10 @@ def main():
         print("Generation: ", generation)
         print("Average generation fitness: ", avg_fitness)
         print('Target Number: ' + str(TARGET_TIME))
-        print("Best Chromosome: ", bestChromosome, " = ", bestChromosome.time)
+        print("Best Chromosome: ", best_chromosome, " = ", best_chromosome.time)
         print("")
 
-        if bestChromosome.time >= TARGET_TIME:
+        if best_chromosome.time >= TARGET_TIME:
             solution_found = True
             print("SUCCESS!!")
         else:
@@ -69,7 +72,7 @@ def main():
                     child = ga.mutate(child)
                     new_population.append(child)
 
-        new_population.append(bestChromosome)
+        new_population.append(best_chromosome)
         population = new_population
         generation += 1
 
