@@ -28,7 +28,8 @@ class Neuron:
             sum_output += (connection.connectedNeuron.get_output() * connection.weight)
         self.output = self.sigmoid(sum_output)
 
-    def sigmoid(self, x):
+    @staticmethod
+    def sigmoid(x):
         return 1 / (1 + math.exp(-x * 1.0))
 
     def set_output(self, output):
@@ -61,10 +62,7 @@ class Network:
     def print_network_structure(self):
         structure = []
         for layer in self.layers:
-            sum = 0
-            for neuron in layer:
-                sum += 1
-            structure.append(sum)
+            structure.append(len(layer))
         print(structure)
 
     def print_network_weights(self):

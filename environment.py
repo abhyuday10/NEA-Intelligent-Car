@@ -79,8 +79,6 @@ class Car(pygame.sprite.Sprite):
 
     # OVERRINDING OOP
     def update(self):
-        self.inputs = self.get_sonar_readings(self.rect.center[0], self.rect.center[1],
-                                              math.radians(abs(self.angle) - 90))
         self.mask = pygame.mask.from_surface(self.image)
         self.crashed = self.check_if_crashed()
 
@@ -422,7 +420,6 @@ class Game:
                 car.feed_forward()
                 car.output = car.get_outputs()
 
-
             for car in self.cars:
                 if car.output == "left":
                     car.rotate_left()
@@ -458,5 +455,4 @@ class Game:
             # .....GA evaluation, new pop repeat
 
             pygame.display.flip()
-            self.clock.tick(60)
-#
+            self.clock.tick(30)

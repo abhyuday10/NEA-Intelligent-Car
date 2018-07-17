@@ -6,7 +6,7 @@ CROSSOVER_RATE = 0.7
 MUTATION_RATE = 0.05
 
 
-class Chromosome():
+class Chromosome:
     def __init__(self, topology):
         self.topology = topology
         self.brain = nn.Network(topology)
