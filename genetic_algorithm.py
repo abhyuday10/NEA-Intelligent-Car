@@ -6,6 +6,7 @@ CROSSOVER_RATE = 0.7
 MUTATION_RATE = 0.05
 
 
+# Chromosome class to manage all data for one entity
 class Chromosome:
     def __init__(self, topology):
         self.topology = topology
@@ -21,6 +22,7 @@ class Chromosome:
         self.weights = weights
 
 
+# Function to generate population of random members
 def generate_population(pool_size, topology):
     pool = []
     for chrom in range(pool_size):
@@ -29,6 +31,7 @@ def generate_population(pool_size, topology):
     return pool
 
 
+# Crossover to create one child base on probability
 def breed_two_chromosomes(first, second):
     if random.uniform(0, 1) <= CROSSOVER_RATE:
         crossover = random.randrange(0, len(first.weights))
@@ -43,6 +46,7 @@ def breed_two_chromosomes(first, second):
         return [first, second]
 
 
+# Mutation of one chromosome to give random features
 def mutate(chromosome):
     weights = chromosome.weights
     for i in range(0, len(weights) - 1):
@@ -52,6 +56,7 @@ def mutate(chromosome):
     return chromosome
 
 
+# Roulette parent selection
 def choose_parent(population):
     population_fitness = 0
     for i in population:
@@ -63,3 +68,9 @@ def choose_parent(population):
         fitness += i.fitness
         if fitness >= pie_size:
             return i
+
+
+
+
+
+

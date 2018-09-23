@@ -1,9 +1,10 @@
 import math
 import random
 import sys
-import thorpy as tp
 import pygame
+import thorpy as tp
 
+# Initialize parameters
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
@@ -12,10 +13,12 @@ RED = (255, 0, 0)
 GRAY = (169, 169, 169)
 
 DRAW_SENSORS = True
+TIME_LIMIT = 820
 
 pygame.init()
 
 
+# Circular obstacle
 class CircleObstacle:
     def __init__(self, colour, x, y, move, radius):
         self.moveX = move[0]
@@ -29,6 +32,7 @@ class CircleObstacle:
         pygame.draw.circle(screen, self.colour, self.pos, self.radius)
 
 
+# Car sprite to run in environment
 class Car(pygame.sprite.Sprite):
     DELTA_ANGLE = 5.5
     SPEED = 5
@@ -108,14 +112,13 @@ class Car(pygame.sprite.Sprite):
             if i % 10 == 0:
                 sample_points.append(outline_points[i])
 
-        # for point in sample_points:
-        #     self.image.set_at(point, BLACK)
-
+        # Samples points in car outline to check if crashed into object
         for point in sample_points:
             offsetted_mask_point = [0, 0]
             offsetted_mask_point[0] = point[0] + self.rect[0]
             offsetted_mask_point[1] = point[1] + self.rect[1]
 
+            # Display collision sprite if crashed
             if self.check_if_point_in_any_obstacle(offsetted_mask_point) or self.check_if_point_in_any_border(
                     offsetted_mask_point):
                 adjusted_rect = [offsetted_mask_point[0] - 25, offsetted_mask_point[1] - 25]
@@ -123,6 +126,7 @@ class Car(pygame.sprite.Sprite):
                 return True
         return False
 
+    # Function to return sensor distance to objects
     def get_arm_distance(self, arm, x, y, angle, offset):
         # Used to count the distance.
         i = 0
@@ -177,7 +181,7 @@ class Car(pygame.sprite.Sprite):
     def get_sonar_readings(self, x, y, angle):
         readings = []
 
-        # Make our arms.Capi
+        # Make our arms
         arm_left = self.make_sonar_arm(x, y)
         arm_middle = arm_left
         arm_right = arm_left
@@ -196,8 +200,7 @@ class Car(pygame.sprite.Sprite):
         spread = 16  # Default spread.
         distance = 20  # Gap before first sensor.
         arm_points = []
-        # Make an arm. We build it flat because we'll rotate it about the
-        # center later.
+        # Make an arm. We build it flat because we'll rotate it about the center later
         for i in range(1, 15):
             arm_points.append((distance + x + (spread * i), y))
         return arm_points
@@ -214,22 +217,22 @@ class Car(pygame.sprite.Sprite):
         return int(new_x), int(new_y)
 
 
+# Environment instance
 class Game:
     clock = pygame.time.Clock()
     screen_size = width, height = 1200, 800
     screen = pygame.display.set_mode(screen_size)
+    pygame.display.set_caption('Intelligent Driver')
 
     def __init__(self, chromosomeList, gen):
         self.running = True
 
+        # Set up environment
         rectx = 200
         recty = 400
         self.spawnrect = [(self.width / 2) - rectx / 2, (self.height / 2) + recty / 20, rectx, recty]
 
         self.carStartPos = [self.spawnrect[0] + 100, self.spawnrect[1] + 100]
-        # self.carStartPos = [random.randint(self.spawnrect[0], self.spawnrect[0] + self.spawnrect[2]),
-        #                     self.spawnrect[1] + 100]
-        # print(self.carStartPos)
 
         self.obstacles = self.generate_obstacles()
         self.borders = self.create_borders()
@@ -246,7 +249,7 @@ class Game:
         self.main_loop()
 
     def generate_cars(self, chromosomeList):
-        # Generate cars, passing in their unique network
+        # Generate cars, passing in their own network
         cars = []
         for chromosome in chromosomeList:
             cars.append(Car(chromosome, self.carStartPos[0],
@@ -255,7 +258,7 @@ class Game:
         return cars
 
     def move_obstacles(self):
-
+        # Update position for each obstacle based on their velocity
         for obstacle in self.obstacles:
             obstacle.pos[0] += obstacle.moveX
             obstacle.pos[1] += obstacle.moveY
@@ -269,6 +272,7 @@ class Game:
             if obstacle.pos[1] - obstacle.radius < 0:
                 obstacle.moveY = obstacle.moveY * -1
 
+    # Create randomly positioned objects with random velocities in environment
     def generate_obstacles(self):
         obstacles = []
         colour = BLUE
@@ -286,6 +290,7 @@ class Game:
             move_y = random.randint(-3, 3)
 
             radius = random.randint(40, 80)
+            # Only spawn if doesn't create obstacle on car
             position = [random.randint(0, self.width - radius), random.randint(0, self.height - radius)]
             if not self.check_if_circle_overlaps(position[0], position[1], radius, obstacles):
                 if not self.circle_rect_collision(self.spawnrect[0], self.height - self.spawnrect[1], self.spawnrect[2],
@@ -322,6 +327,7 @@ class Game:
                 return True
         return False
 
+    # Check if any obstacles collide
     def print_if_obstacles_overlap(self):
         overlapping = False
         for obs in self.obstacles:
@@ -379,6 +385,7 @@ class Game:
         gen_text = tp.OneLineText.make("Generation: " + str(self.generation_number))
         time_text = tp.OneLineText.make("Time: " + str(self.time))
         live_text = tp.OneLineText.make("Cars Alive: " + str(len(self.cars)) + "/" + str(self.pop_size))
+
         live_text.set_font_size(18)
         gen_text.set_font_size(20)
         time_text.set_font_size(20)
@@ -393,13 +400,12 @@ class Game:
         box.blit()
 
     def draw(self):
-
-        # pygame.draw.rect(self.screen, GRAY, self.spawnrect)
         self.draw_obstacles()
         self.create_borders()
         self.draw_cars()
         self.draw_gui()
 
+    # Main loop that is run after initialising environment
     def main_loop(self):
         self.time = 0
         while self.running:
@@ -408,51 +414,44 @@ class Game:
                 if event.type == pygame.QUIT:
                     sys.exit()
 
-            # Each Frame
-            self.screen.fill(WHITE)
+            # 'Render' each frame by calculating everything until no cars left
 
+            self.screen.fill(WHITE)
             self.set_obstacles()
             self.move_obstacles()
 
+            # Calculate data for each car
             for car in self.cars:
+
+                # Get output decision from each car's neural network
                 car.inputs = car.get_sensor_data()
                 car.set_inputs(car.inputs)
                 car.feed_forward()
                 car.output = car.get_outputs()
 
-            for car in self.cars:
+                # Evaluate output and react in environment
                 if car.output == "left":
                     car.rotate_left()
                 elif car.output == "right":
                     car.rotate_right()
                 car.move_forward()
 
-            for car in self.cars:
+                # If any cars crashed, record their performance(time) and remove from environment
                 if car.crashed:
                     car.calculate_fitness(self.time)
                     car.chromosome.time = self.time
                     self.evaluatedCars.append(car)
                     self.cars.remove(car)
 
-            if len(self.cars) == 0 or self.time > 820:
+            # Terminate environment if all cars evaluated(they crashed) or time limit reached
+            if len(self.cars) == 0 or self.time > TIME_LIMIT:
                 for car in self.cars:
                     car.calculate_fitness(self.time)
                     car.chromosome.time = self.time
                     self.evaluatedCars.append(car)
                 return self.cars
 
+            # Draw frame
             self.draw()
-
-            # Do all drawing and stuff here:
-            # set obstacles for cars
-            # initial draw
-            # get sensor data: set brain inputs --->
-            # evaluate car outputs; move cars; draw everything; test collision
-            # for each:
-            # if no crash: repeat
-            # else: set car crash=True, calc fitness, remove from pop
-            # DO until no cars left
-            # .....GA evaluation, new pop repeat
-
             pygame.display.flip()
             self.clock.tick(30)

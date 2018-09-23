@@ -1,18 +1,20 @@
 import math
 import numpy as np
 
-
+# Connection class to store connections between nodes
 class Connection:
     def __init__(self, connected_neuron):
         self.connectedNeuron = connected_neuron
         self.weight = np.random.normal()
 
-
+# Node class for network
 class Neuron:
 
     def __init__(self, prev_layer):
         self.dendrons = []
         self.output = 0.0
+
+        #Connect to previous layer if this isn't the first layer
         if prev_layer is None:
             pass
         else:
@@ -20,6 +22,7 @@ class Neuron:
                 connection = Connection(neuron)
                 self.dendrons.append(connection)
 
+    #Propagate network through network to produce output
     def feed_forward(self):
         sum_output = 0
         if len(self.dendrons) == 0:
@@ -38,7 +41,7 @@ class Neuron:
     def get_output(self):
         return self.output
 
-
+# Network to act as 'brain' for each car
 class Network:
     def __init__(self, topology):
         self.layers = []
@@ -63,15 +66,16 @@ class Network:
         structure = []
         for layer in self.layers:
             structure.append(len(layer))
-        print(structure)
+        print("Initiated Neural network with structure: ",structure)
 
     def print_network_weights(self):
-        layers = []
-        for layer in self.layers:
-            for neuron in layer:
+        for layerI in range(len(self.layers)):
+            layer = []
+            for neuron in self.layers[layerI]:
                 for dendron in neuron.dendrons:
-                    layers.append(dendron.weight)
-        print(layers)
+                    layer.append(dendron.weight)
+            print("Layer ",layerI,":  ",layer)
+        print("")
 
     def get_network_weights(self):
         layers = []
