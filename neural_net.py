@@ -115,3 +115,9 @@ class Network:
             return "left"
         elif self.layers[-1][0].get_output() < self.layers[-1][1].get_output():
             return "right"
+
+neural_network=Network(topology=[5,3,2])
+neural_network.print_network_structure()
+neural_network.print_network_weights()
+neural_network.feed_forward()
+print(neural_network.get_decision())

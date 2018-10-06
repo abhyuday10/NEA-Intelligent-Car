@@ -70,7 +70,23 @@ def choose_parent(population):
             return i
 
 
+print("___Parents___")
+Chromosome1 = Chromosome(topology=[5, 3, 2])
+Chromosome2 = Chromosome(topology=[5, 3, 2])
 
+Chromosome1.brain.print_network_weights()
+Chromosome2.brain.print_network_weights()
+
+
+print("___Child___")
+childs = breed_two_chromosomes(Chromosome1, Chromosome2)
+for child in childs:
+    child.brain.print_network_weights()
+
+print("___Mutated Child___")
+for child in childs:
+    mutated_child = mutate(child)
+    child.brain.print_network_weights()
 
 
 

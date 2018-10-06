@@ -3,6 +3,7 @@ import random
 import sys
 import pygame
 import thorpy as tp
+import matplotlib.pyplot as plt
 
 # Initialize parameters
 BLACK = (0, 0, 0)
@@ -81,7 +82,7 @@ class Car(pygame.sprite.Sprite):
         self.pos = self.pos[0] + (dx * self.SPEED), self.pos[1] - (dy * self.SPEED)
         self.rect.center = self.pos
 
-    # OVERRINDING OOP
+    # OVERRINDING DEFAULT PYGAME UPDATE FUNCTION
     def update(self):
         self.mask = pygame.mask.from_surface(self.image)
         self.crashed = self.check_if_crashed()
@@ -198,7 +199,7 @@ class Car(pygame.sprite.Sprite):
     @staticmethod
     def make_sonar_arm(x, y):
         spread = 16  # Default spread.
-        distance = 20  # Gap before first sensor.
+        distance = 10  # Gap before first sensor.
         arm_points = []
         # Make an arm. We build it flat because we'll rotate it about the center later
         for i in range(1, 15):
@@ -408,6 +409,7 @@ class Game:
     # Main loop that is run after initialising environment
     def main_loop(self):
         self.time = 0
+
         while self.running:
             self.time += 1
             for event in pygame.event.get():

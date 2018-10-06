@@ -1,4 +1,3 @@
-"""GENETIC CONTROLLER"""
 
 import environment as game
 import genetic_algorithm as ga
