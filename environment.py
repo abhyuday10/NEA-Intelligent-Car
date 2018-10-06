@@ -3,7 +3,6 @@ import random
 import sys
 import pygame
 import thorpy as tp
-import matplotlib.pyplot as plt
 
 # Initialize parameters
 BLACK = (0, 0, 0)
@@ -14,7 +13,7 @@ RED = (255, 0, 0)
 GRAY = (169, 169, 169)
 
 DRAW_SENSORS = True
-TIME_LIMIT = 820
+TIME_LIMIT = 200
 
 pygame.init()
 

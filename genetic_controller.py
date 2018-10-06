@@ -1,6 +1,7 @@
 
 import environment as game
 import genetic_algorithm as ga
+import matplotlib.pyplot as plt
 
 POOL_SIZE = 20
 TARGET_TIME = 5999
@@ -16,6 +17,14 @@ def reset_fittest(population):
 
 # Main loop
 def main():
+
+    # Setup Graphing variables
+    generation_fitnesses = []
+    figure = plt.figure(figsize=(6, 3))
+    fitnessGraph = figure.add_subplot(1, 1, 1)
+    fitnessGraph.set_xlabel("Generation")
+    fitnessGraph.set_ylabel("Fitness")
+
     # Generate Population and set up simulation
     population = ga.generate_population(POOL_SIZE, TOPOLOGY)
     print("Initial population generated")
@@ -51,6 +60,17 @@ def main():
         for i in population:
             total_population_fitness += i.fitness
         avg_fitness = total_population_fitness / len(population)
+
+        # Visualization
+        generation_fitnesses.append(avg_fitness)
+        x = [i for i in range(0, len(generation_fitnesses))]
+        y = generation_fitnesses
+
+        fitnessGraph.clear()
+        fitnessGraph.set_xlabel("Generation")
+        fitnessGraph.set_ylabel("Average Fitness")
+        fitnessGraph.plot(x, y)
+        plt.pause(0.1)
 
         # Display current iteration info
         print("")
