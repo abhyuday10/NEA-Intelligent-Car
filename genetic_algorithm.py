@@ -1,13 +1,12 @@
 import random
 
 import neural_net as nn
-
-CROSSOVER_RATE = 0.7
-MUTATION_RATE = 0.05
+import constants
 
 
-# Chromosome class to manage all data for one entity
-class Chromosome:
+
+# Code class to manage all data for one entity
+class Code:
     def __init__(self, topology):
         self.topology = topology
         self.brain = nn.Network(topology)
@@ -25,20 +24,20 @@ class Chromosome:
 # Function to generate population of random members
 def generate_population(pool_size, topology):
     pool = []
-    for chrom in range(pool_size):
-        member = Chromosome(topology)
+    for solution in range(pool_size):
+        member = Code(topology)
         pool.append(member)
     return pool
 
 
 # Crossover to create one child base on probability
-def breed_two_chromosomes(first, second):
-    if random.uniform(0, 1) <= CROSSOVER_RATE:
+def produce_child_solution(first, second):
+    if random.uniform(0, 1) <= constants.CROSSOVER_RATE:
         crossover = random.randrange(0, len(first.weights))
         topology = first.topology
         offspring_weights = first.weights[0: crossover] + second.weights[crossover:]
 
-        offspring = Chromosome(topology)
+        offspring = Code(topology)
         offspring.set_weights(offspring_weights)
 
         return [offspring]
@@ -46,14 +45,14 @@ def breed_two_chromosomes(first, second):
         return [first, second]
 
 
-# Mutation of one chromosome to give random features
-def mutate(chromosome):
-    weights = chromosome.weights
+# Mutation of one solution to give random features
+def mutate(solution):
+    weights = solution.weights
     for i in range(0, len(weights) - 1):
-        if random.uniform(0, 1) <= MUTATION_RATE:
+        if random.uniform(0, 1) <= constants.MUTATION_RATE:
             weights[i] = weights[i] * random.uniform(0.5, 1.5)
-    chromosome.set_weights(weights)
-    return chromosome
+    solution.set_weights(weights)
+    return solution
 
 
 # Roulette parent selection
@@ -69,24 +68,6 @@ def choose_parent(population):
         if fitness >= pie_size:
             return i
 
-
-print("___Parents___")
-Chromosome1 = Chromosome(topology=[5, 3, 2])
-Chromosome2 = Chromosome(topology=[5, 3, 2])
-
-Chromosome1.brain.print_network_weights()
-Chromosome2.brain.print_network_weights()
-
-
-print("___Child___")
-childs = breed_two_chromosomes(Chromosome1, Chromosome2)
-for child in childs:
-    child.brain.print_network_weights()
-
-print("___Mutated Child___")
-for child in childs:
-    mutated_child = mutate(child)
-    child.brain.print_network_weights()
 
 
 

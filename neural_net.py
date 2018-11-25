@@ -3,12 +3,12 @@ import numpy as np
 
 # Connection class to store connections between nodes
 class Connection:
-    def __init__(self, connected_neuron):
-        self.connectedNeuron = connected_neuron
+    def __init__(self, connected_node):
+        self.connected_node = connected_node
         self.weight = np.random.normal()
 
 # Node class for network
-class Neuron:
+class Node:
 
     def __init__(self, prev_layer):
         self.dendrons = []
@@ -18,8 +18,8 @@ class Neuron:
         if prev_layer is None:
             pass
         else:
-            for neuron in prev_layer:
-                connection = Connection(neuron)
+            for node in prev_layer:
+                connection = Connection(node)
                 self.dendrons.append(connection)
 
     #Propagate network through network to produce output
@@ -28,7 +28,7 @@ class Neuron:
         if len(self.dendrons) == 0:
             return
         for connection in self.dendrons:
-            sum_output += (connection.connectedNeuron.get_output() * connection.weight)
+            sum_output += (connection.connected_node.get_output() * connection.weight)
         self.output = self.sigmoid(sum_output)
 
     @staticmethod
@@ -52,13 +52,13 @@ class Network:
             layer = []
             for i in range(topology[layerNum]):
                 if len(self.layers) == 0:
-                    layer.append(Neuron(None))
+                    layer.append(Node(None))
                 else:
-                    layer.append(Neuron(self.layers[-1]))
+                    layer.append(Node(self.layers[-1]))
 
             if not layer_number >= len(topology):
-                layer.append(Neuron(None))  # bias neuron
-                layer[-1].set_output(1)  # setting output of bias neuron as 1
+                layer.append(Node(None))  # bias node
+                layer[-1].set_output(1)  # setting output of bias node as 1
 
             self.layers.append(layer)
 
@@ -71,8 +71,8 @@ class Network:
     def print_network_weights(self):
         for layerI in range(len(self.layers)):
             layer = []
-            for neuron in self.layers[layerI]:
-                for dendron in neuron.dendrons:
+            for node in self.layers[layerI]:
+                for dendron in node.dendrons:
                     layer.append(dendron.weight)
             print("Layer ",layerI,":  ",layer)
         print("")
@@ -80,16 +80,16 @@ class Network:
     def get_network_weights(self):
         layers = []
         for layer in self.layers:
-            for neuron in layer:
-                for dendron in neuron.dendrons:
+            for node in layer:
+                for dendron in node.dendrons:
                     layers.append(dendron.weight)
         return layers
 
     def set_network_weights(self, weights):
         i = 0
         for layer in self.layers:
-            for neuron in layer:
-                for dendron in neuron.dendrons:
+            for node in layer:
+                for dendron in node.dendrons:
                     if i > len(weights) - 1:
                         return
                     dendron.weight = weights[i]
@@ -101,13 +101,13 @@ class Network:
 
     def feed_forward(self):
         for layer in self.layers[1:]:
-            for neuron in layer:
-                neuron.feed_forward()
+            for node in layer:
+                node.feed_forward()
 
     def get_results(self):
         output = []
-        for neuron in self.layers[-1]:
-            output.append(neuron.get_output())
+        for node in self.layers[-1]:
+            output.append(node.get_output())
         return output
 
     def get_decision(self):
@@ -116,8 +116,3 @@ class Network:
         elif self.layers[-1][0].get_output() < self.layers[-1][1].get_output():
             return "right"
 
-neural_network=Network(topology=[5,3,2])
-neural_network.print_network_structure()
-neural_network.print_network_weights()
-neural_network.feed_forward()
-print(neural_network.get_decision())

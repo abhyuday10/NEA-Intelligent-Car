@@ -1,20 +1,14 @@
 import math
 import random
 import sys
+
 import pygame
 import thorpy as tp
 
-# Initialize parameters
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-BLUE = (0, 0, 255)
-GREEN = (0, 255, 0)
-RED = (255, 0, 0)
-GRAY = (169, 169, 169)
+import constants
+from car import Car
 
-DRAW_SENSORS = True
-TIME_LIMIT = 200
-
+# Initialize pygame
 pygame.init()
 
 
@@ -32,202 +26,19 @@ class CircleObstacle:
         pygame.draw.circle(screen, self.colour, self.pos, self.radius)
 
 
-# Car sprite to run in environment
-class Car(pygame.sprite.Sprite):
-    DELTA_ANGLE = 5.5
-    SPEED = 5
-
-    def __init__(self, chromosome, x, y):
-        pygame.sprite.Sprite.__init__(self)
-
-        self.boom = pygame.image.load("boom.png")
-        self.boom = pygame.transform.scale(self.boom, (50, 50))
-
-        if chromosome.fittest:
-            self.image = pygame.image.load("car_fit.png")
-        else:
-            self.image = pygame.image.load("car.png")
-
-        self.image = pygame.transform.scale(self.image, (30, 60))
-        self.orig_image = self.image
-
-        self.mask = pygame.mask.from_surface(self.image)
-
-        self.pos = [x, y]
-        self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
-
-        self.angle = 0
-        self.crashed = False
-
-        self.obstacles = None
-        self.borders = None
-
-        self.chromosome = chromosome
-
-        self.inputs = None
-        self.output = None
-
-    def rotate_right(self):
-        self.angle = (self.angle - self.DELTA_ANGLE) % -360
-
-    def rotate_left(self):
-        self.angle = (self.angle + self.DELTA_ANGLE) % -360
-
-    def move_forward(self):
-        dx = math.cos(math.radians(self.angle + 90))
-        dy = math.sin(math.radians(self.angle + 90))
-
-        self.pos = self.pos[0] + (dx * self.SPEED), self.pos[1] - (dy * self.SPEED)
-        self.rect.center = self.pos
-
-    # OVERRINDING DEFAULT PYGAME UPDATE FUNCTION
-    def update(self):
-        self.mask = pygame.mask.from_surface(self.image)
-        self.crashed = self.check_if_crashed()
-
-    def set_inputs(self, inputs):
-        self.chromosome.brain.set_inputs(inputs)
-
-    def feed_forward(self):
-        self.chromosome.brain.feed_forward()
-
-    def get_outputs(self):
-        return self.chromosome.brain.get_decision()
-
-    def calculate_fitness(self, time):
-        fitness = math.pow(time, 1)
-        self.chromosome.fitness = fitness
-
-    def draw(self):
-        self.image = pygame.transform.rotate(self.orig_image, self.angle)
-        self.rect = self.image.get_rect(center=self.rect.center)
-        Game.screen.blit(self.image, self.rect)
-
-    def check_if_crashed(self):
-
-        sample_points = []
-        outline_points = self.mask.outline()
-        for i in range(len(outline_points)):
-            if i % 10 == 0:
-                sample_points.append(outline_points[i])
-
-        # Samples points in car outline to check if crashed into object
-        for point in sample_points:
-            offsetted_mask_point = [0, 0]
-            offsetted_mask_point[0] = point[0] + self.rect[0]
-            offsetted_mask_point[1] = point[1] + self.rect[1]
-
-            # Display collision sprite if crashed
-            if self.check_if_point_in_any_obstacle(offsetted_mask_point) or self.check_if_point_in_any_border(
-                    offsetted_mask_point):
-                adjusted_rect = [offsetted_mask_point[0] - 25, offsetted_mask_point[1] - 25]
-                Game.screen.blit(self.boom, adjusted_rect)
-                return True
-        return False
-
-    # Function to return sensor distance to objects
-    def get_arm_distance(self, arm, x, y, angle, offset):
-        # Used to count the distance.
-        i = 0
-
-        # Look at each point and see if we've hit something.
-        for point in arm:
-            i += 1
-
-            # Move the point to the right spot.
-            rotated_p = self.get_rotated_point(
-                x, y, point[0], point[1], angle + offset
-            )
-
-            # Check if we've hit something. Return the current i (distance)
-            # if we did.
-            if rotated_p[0] <= 0 or rotated_p[1] <= 0 \
-                    or rotated_p[0] >= Game.width or rotated_p[1] >= Game.height:
-                return i  # Sensor is off the screen.
-            elif self.check_if_point_in_any_obstacle(rotated_p):
-                return i
-
-            elif DRAW_SENSORS:
-                pygame.draw.circle(Game.screen, (BLACK), (rotated_p), 2)
-
-        # Return the distance for the arm.
-        return i
-
-    def check_if_point_in_any_border(self, point):
-        for border in self.borders:
-            if self.check_inside_rect(point[0], point[1], border):
-                return True
-        return False
-
-    def check_if_point_in_any_obstacle(self, point):
-        for obstacle in self.obstacles:
-            if self.check_inside_circle(point[0], point[1], obstacle.pos[0], obstacle.pos[1], obstacle.radius):
-                return True
-        return False
-
-    # STATIC METHODS
-    @staticmethod
-    def check_inside_rect(x, y, rect):
-        return (rect[0] + rect[2]) > x > rect[0] and (rect[1] + rect[3]) > y > rect[1]
-
-    @staticmethod
-    def check_inside_circle(x, y, a, b, r):
-        return (x - a) * (x - a) + (y - b) * (y - b) < r * r
-
-    def get_sensor_data(self):
-        return self.get_sonar_readings(self.rect.center[0], self.rect.center[1], math.radians(abs(self.angle) - 90))
-
-    def get_sonar_readings(self, x, y, angle):
-        readings = []
-
-        # Make our arms
-        arm_left = self.make_sonar_arm(x, y)
-        arm_middle = arm_left
-        arm_right = arm_left
-
-        # Rotate them and get readings.
-        readings.append(self.get_arm_distance(arm_left, x, y, angle, 0.75))
-        readings.append(self.get_arm_distance(arm_left, x, y, angle, 1.55))
-        readings.append(self.get_arm_distance(arm_middle, x, y, angle, 0))
-        readings.append(self.get_arm_distance(arm_left, x, y, angle, -1.55))
-        readings.append(self.get_arm_distance(arm_right, x, y, angle, -0.75))
-
-        return readings
-
-    @staticmethod
-    def make_sonar_arm(x, y):
-        spread = 16  # Default spread.
-        distance = 10  # Gap before first sensor.
-        arm_points = []
-        # Make an arm. We build it flat because we'll rotate it about the center later
-        for i in range(1, 15):
-            arm_points.append((distance + x + (spread * i), y))
-        return arm_points
-
-    @staticmethod
-    def get_rotated_point(x_1, y_1, x_2, y_2, radians):
-        # Rotate x_2, y_2 around x_1, y_1 by angle.
-        x_change = (x_2 - x_1) * math.cos(radians) + \
-                   (y_2 - y_1) * math.sin(radians)
-        y_change = (y_1 - y_2) * math.cos(radians) - \
-                   (x_1 - x_2) * math.sin(radians)
-        new_x = x_change + x_1
-        new_y = y_change + y_1
-        return int(new_x), int(new_y)
 
 
 # Environment instance
-class Game:
+class Environment:
     clock = pygame.time.Clock()
     screen_size = width, height = 1200, 800
     screen = pygame.display.set_mode(screen_size)
     pygame.display.set_caption('Intelligent Driver')
 
-    def __init__(self, chromosomeList, gen):
+    def __init__(self, solution_list, gen):
         self.running = True
 
-        # Set up environment
+        # Set up Environment
         rectx = 200
         recty = 400
         self.spawnrect = [(self.width / 2) - rectx / 2, (self.height / 2) + recty / 20, rectx, recty]
@@ -237,22 +48,22 @@ class Game:
         self.obstacles = self.generate_obstacles()
         self.borders = self.create_borders()
 
-        self.cars = self.generate_cars(chromosomeList)
+        self.cars = self.generate_cars(solution_list)
         self.evaluatedCars = []
 
         self.generation_number = gen
         self.time = 0
 
-        self.pop_size = len(chromosomeList)
+        self.pop_size = len(solution_list)
 
         self.set_borders()
-        self.main_loop()
+        self.main_simulation()
 
-    def generate_cars(self, chromosomeList):
+    def generate_cars(self, solution_list):
         # Generate cars, passing in their own network
         cars = []
-        for chromosome in chromosomeList:
-            cars.append(Car(chromosome, self.carStartPos[0],
+        for solution in solution_list:
+            cars.append(Car(solution, self.carStartPos[0],
                             self.carStartPos[1]))
 
         return cars
@@ -272,10 +83,10 @@ class Game:
             if obstacle.pos[1] - obstacle.radius < 0:
                 obstacle.moveY = obstacle.moveY * -1
 
-    # Create randomly positioned objects with random velocities in environment
+    # Create randomly positioned objects with random velocities in Environment
     def generate_obstacles(self):
         obstacles = []
-        colour = BLUE
+        colour = constants.BLUE
         number_of_obstacles = random.randint(4, 9)
 
         position = [int(self.spawnrect[0] - 80), int(self.spawnrect[1])]
@@ -348,7 +159,7 @@ class Game:
 
     def create_borders(self):
         line_width = 10
-        colour = RED
+        colour = constants.RED
         width = self.width
         height = self.height
         # top line
@@ -378,7 +189,7 @@ class Game:
             car.update()
             car.draw()
         for car in self.cars:
-            if car.chromosome.fittest:
+            if car.solution.fittest:
                 car.draw()
 
     def draw_gui(self):
@@ -405,8 +216,8 @@ class Game:
         self.draw_cars()
         self.draw_gui()
 
-    # Main loop that is run after initialising environment
-    def main_loop(self):
+    # Main loop that is run after initialising Environment
+    def main_simulation(self):
         self.time = 0
 
         while self.running:
@@ -417,7 +228,7 @@ class Game:
 
             # 'Render' each frame by calculating everything until no cars left
 
-            self.screen.fill(WHITE)
+            self.screen.fill(constants.WHITE)
             self.set_obstacles()
             self.move_obstacles()
 
@@ -430,25 +241,25 @@ class Game:
                 car.feed_forward()
                 car.output = car.get_outputs()
 
-                # Evaluate output and react in environment
+                # Evaluate output and react in Environment
                 if car.output == "left":
                     car.rotate_left()
                 elif car.output == "right":
                     car.rotate_right()
                 car.move_forward()
 
-                # If any cars crashed, record their performance(time) and remove from environment
+                # If any cars crashed, record their performance(time) and remove from Environment
                 if car.crashed:
                     car.calculate_fitness(self.time)
-                    car.chromosome.time = self.time
+                    car.solution.time = self.time
                     self.evaluatedCars.append(car)
                     self.cars.remove(car)
 
-            # Terminate environment if all cars evaluated(they crashed) or time limit reached
-            if len(self.cars) == 0 or self.time > TIME_LIMIT:
+            # Terminate Environment if all cars evaluated(they crashed) or time limit reached
+            if len(self.cars) == 0 or self.time > constants.TIME_LIMIT:
                 for car in self.cars:
                     car.calculate_fitness(self.time)
-                    car.chromosome.time = self.time
+                    car.solution.time = self.time
                     self.evaluatedCars.append(car)
                 return self.cars
 

@@ -1,23 +1,18 @@
-
-import environment as game
+import environment as env
 import genetic_algorithm as ga
 import matplotlib.pyplot as plt
-
-POOL_SIZE = 20
-TARGET_TIME = 5999
-TOPOLOGY = [5, 3, 2]
+import constants
 
 
-# Set all member's fitness to 0
+# Set all members' fitness to 0
 def reset_fittest(population):
-    for chrom in population:
-        chrom.fittest = False
+    for solution in population:
+        solution.fittest = False
     return population
 
 
 # Main loop
 def main():
-
     # Setup Graphing variables
     generation_fitnesses = []
     figure = plt.figure(figsize=(6, 3))
@@ -26,14 +21,13 @@ def main():
     fitnessGraph.set_ylabel("Fitness")
 
     # Generate Population and set up simulation
-    population = ga.generate_population(POOL_SIZE, TOPOLOGY)
+    population = ga.generate_population(constants.POOL_SIZE, constants.TOPOLOGY)
     print("Initial population generated")
 
     # Display generated population
     population[0].brain.print_network_structure()
     for i in population:
         i.brain.print_network_weights()
-
 
     generation = 0
     solution_found = False
@@ -42,18 +36,17 @@ def main():
 
         # Evaluate population fitness
         print("Evaluating current population...")
-        gameState = game.Game(population, generation)
+        env.Environment(population, generation)
 
+        # Find best Code and show info
+        solution = population[0]
+        for solution in population:
+            if solution.fitness > solution.fitness:
+                solution = solution
 
-        # Find best Chromosome and show info
-        best_chromosome = population[0]
-        for chromosome in population:
-            if chromosome.fitness > best_chromosome.fitness:
-                best_chromosome = chromosome
-
-        # Mark chromosome as fittest in population
-        best_chromosome.fittest = True
-        print("Best chromosome located and marked at: ", hex(id(best_chromosome)))
+        # Mark solution as fittest in population
+        solution.fittest = True
+        print("Best solution located and marked at: ", hex(id(solution)))
 
         # Calculate average population fitness
         total_population_fitness = 0
@@ -76,12 +69,12 @@ def main():
         print("")
         print("Generation: ", generation)
         print("Average generation fitness: ", avg_fitness)
-        print('Target Number: ' + str(TARGET_TIME))
-        print("Best Chromosome fitness = ", best_chromosome.time)
+        print('Target Number: ' + str(constants.TARGET_TIME))
+        print("Best Code fitness = ", solution.time)
         print("")
 
         # Stop simulation if minumum criteria met
-        if best_chromosome.time >= TARGET_TIME:
+        if solution.time >= constants.TARGET_TIME:
             solution_found = True
             print("Minimum search criteria met, terminating instance...")
         else:
@@ -90,23 +83,23 @@ def main():
         # Generate new generation
         # Choose 2 parents and create and add one child to next population
         new_population = []
-        while len(new_population) < POOL_SIZE:
+        while len(new_population) < constants.POOL_SIZE:
 
             parent1 = ga.choose_parent(population)
             parent2 = ga.choose_parent(population)
 
-            childs = ga.breed_two_chromosomes(parent1, parent2)
+            childs = ga.produce_child_solution(parent1, parent2)
             for child in childs:
                 if child not in population:
                     child = ga.mutate(child)
                     new_population.append(child)
 
-        # Add best chromosome from last iteration
-        new_population.append(best_chromosome)
+        # Add best solution from last iteration
+        new_population.append(solution)
         population = new_population
         generation += 1
+
 
 print("")
 if __name__ == '__main__':
     main()
-
