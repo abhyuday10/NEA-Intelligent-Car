@@ -1,66 +1,77 @@
+"""This module is used by the ML_controller for the training simulation and visualisation.PyGame is used for the rendering."""
+
 import math
 import random
 import sys
 
 import pygame
-import thorpy as tp
+import thorpy as tp  # tkinter wrapper for the GUI
 
 import constants
 from car import Car
 
-# Initialize pygame
+# Initialize the Pygame library
 pygame.init()
 
 
-# Circular obstacle
 class CircleObstacle:
+    # Circular obstacle class to manage an obstacle instance in the environment
+    # Can be instantiated with coordinates, movement velocity and radius.
+
     def __init__(self, colour, x, y, move, radius):
-        self.moveX = move[0]
-        self.moveY = move[1]
+        self.moveX = move[0]  # x velocity
+        self.moveY = move[1]  # y velocity
 
         self.colour = colour
         self.pos = [x, y]
         self.radius = radius
 
+    # Simple function to render this object onto the screen using Pygame
     def draw_to_screen(self, screen):
         pygame.draw.circle(screen, self.colour, self.pos, self.radius)
 
 
-
-
-# Environment instance
 class Environment:
-    clock = pygame.time.Clock()
-    screen_size = width, height = 1200, 800
+    # Environment class to evaluate one generation of solutions
+    # Takes a list of the solutions as input
+    # Returns the evaluated solutions and their fitness
+
+    # Initialising environment variables
+    clock = pygame.time.Clock()  # Pygame clock to sync FPS
+    screen_size = width, height = constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT
     screen = pygame.display.set_mode(screen_size)
     pygame.display.set_caption('Intelligent Driver')
 
     def __init__(self, solution_list, gen):
         self.running = True
 
-        # Set up Environment
         rectx = 200
         recty = 400
+
+        # Specifying area where obstacles do not spawn
         self.spawnrect = [(self.width / 2) - rectx / 2, (self.height / 2) + recty / 20, rectx, recty]
 
+        # Specifying area where cars spawn
         self.carStartPos = [self.spawnrect[0] + 100, self.spawnrect[1] + 100]
 
+        # Generate obstacles, borders and cars into environment
         self.obstacles = self.generate_obstacles()
         self.borders = self.create_borders()
-
         self.cars = self.generate_cars(solution_list)
-        self.evaluatedCars = []
+
+        self.evaluatedCars = []  # List to put cars in once evaluated
 
         self.generation_number = gen
         self.time = 0
 
         self.pop_size = len(solution_list)
-
         self.set_borders()
+
+        # Begin evaluation process for each frame
         self.main_simulation()
 
     def generate_cars(self, solution_list):
-        # Generate cars, passing in their own network
+        # Generate cars from the list of solutions(neural networks) to be evaluated
         cars = []
         for solution in solution_list:
             cars.append(Car(solution, self.carStartPos[0],
@@ -69,11 +80,13 @@ class Environment:
         return cars
 
     def move_obstacles(self):
-        # Update position for each obstacle based on their velocity
+        # Updates position for each obstacle based on their velocity on that frame
         for obstacle in self.obstacles:
+            # Changes position of each obstacle by their velocity
             obstacle.pos[0] += obstacle.moveX
             obstacle.pos[1] += obstacle.moveY
 
+            # Simple algorithm to create bounce from borders by reversing direction on impact
             if obstacle.pos[0] + obstacle.radius > self.width:
                 obstacle.moveX = obstacle.moveX * -1
             if obstacle.pos[0] - obstacle.radius < 0:
@@ -83,25 +96,27 @@ class Environment:
             if obstacle.pos[1] - obstacle.radius < 0:
                 obstacle.moveY = obstacle.moveY * -1
 
-    # Create randomly positioned objects with random velocities in Environment
     def generate_obstacles(self):
+        # Create randomly positioned objects with random velocities in Environment
         obstacles = []
         colour = constants.BLUE
         number_of_obstacles = random.randint(4, 9)
 
+        # Creates obstacles with the same position near spawn on each generation to encourage cars to travel further
         position = [int(self.spawnrect[0] - 80), int(self.spawnrect[1])]
         obstacles.append(CircleObstacle(colour, position[0], position[1], [1, 0], 60))
-
         position = [int(self.spawnrect[0] + self.spawnrect[2] + 80), int(self.spawnrect[1])]
         obstacles.append(CircleObstacle(colour, position[0], position[1], [-1, 0], 60))
 
         while len(obstacles) < number_of_obstacles:
-
+            # Generates a random  velocity
             move_x = random.randint(-3, 3)
             move_y = random.randint(-3, 3)
 
+            # Generates a random radius
             radius = random.randint(40, 80)
-            # Only spawn if doesn't create obstacle on car
+
+            # Checks to make sure obstacles do not spawn on top of cars
             position = [random.randint(0, self.width - radius), random.randint(0, self.height - radius)]
             if not self.check_if_circle_overlaps(position[0], position[1], radius, obstacles):
                 if not self.circle_rect_collision(self.spawnrect[0], self.height - self.spawnrect[1], self.spawnrect[2],
@@ -133,13 +148,14 @@ class Environment:
         return dx * dx + dy * dy <= (radius * radius)
 
     def check_if_circle_overlaps(self, x, y, r, other_obstacles):
+        # Detects if any obstacles overlaps
         for obstacle in other_obstacles:
             if self.check_if_circles_overlap(x, y, r, obstacle.pos[0], obstacle.pos[1], obstacle.radius):
                 return True
         return False
 
-    # Check if any obstacles collide
     def print_if_obstacles_overlap(self):
+        # Returns True if any obstacles collide with another
         overlapping = False
         for obs in self.obstacles:
             for obst in self.obstacles:
@@ -153,15 +169,18 @@ class Environment:
 
     @staticmethod
     def check_if_circles_overlap(x, y, r, a, b, t):
+        # Detects if any circles overlap
         if math.hypot(x - a, y - b) <= (r + t):
             return True
         return False
 
     def create_borders(self):
+        # This function creates the rectangle objects that act as borders for the screen
         line_width = 10
         colour = constants.RED
         width = self.width
         height = self.height
+
         # top line
         top = pygame.draw.rect(self.screen, colour, [0, 0, width, line_width])
         # bottom line
@@ -180,11 +199,13 @@ class Environment:
         for car in self.cars:
             car.borders = self.borders
 
+    # Rendering of different objects in the environment by calling their draw methods
     def draw_obstacles(self):
         for obstacle in self.obstacles:
             obstacle.draw_to_screen(self.screen)
 
     def draw_cars(self):
+        # Call the update the positions and draw each car.
         for car in self.cars:
             car.update()
             car.draw()
@@ -193,23 +214,28 @@ class Environment:
                 car.draw()
 
     def draw_gui(self):
+        # Using the tkinter wrapper, thorpy to render the HUD.
         gen_text = tp.OneLineText.make("Generation: " + str(self.generation_number))
         time_text = tp.OneLineText.make("Time: " + str(self.time))
         live_text = tp.OneLineText.make("Cars Alive: " + str(len(self.cars)) + "/" + str(self.pop_size))
 
+        # Specifies font size for HUD.
         live_text.set_font_size(18)
         gen_text.set_font_size(20)
         time_text.set_font_size(20)
 
+        # Put elements into box to manage them better.
         box = tp.Box.make(elements=[gen_text, time_text, live_text])
         menu = tp.Menu(box)
 
+        # Render each element onto screen
         for element in menu.get_population():
             element.surface = self.screen
 
         box.set_topleft(((self.screen_size[0] - box.get_rect()[2]) - 10, 10))
         box.blit()
 
+    # Calling all the draw methods
     def draw(self):
         self.draw_obstacles()
         self.create_borders()
@@ -218,16 +244,17 @@ class Environment:
 
     # Main loop that is run after initialising Environment
     def main_simulation(self):
-        self.time = 0
+        self.time = 0  # Stores how long the current generation has been running for.
 
         while self.running:
+            # This is the main loop that renders each frame.
+            # Each iteration involves processing and rendering data for one frame.
             self.time += 1
-            for event in pygame.event.get():
+            for event in pygame.event.get():  # Managing the pygame event system.
                 if event.type == pygame.QUIT:
-                    sys.exit()
+                    sys.exit()  # Simple event check to close window.
 
             # 'Render' each frame by calculating everything until no cars left
-
             self.screen.fill(constants.WHITE)
             self.set_obstacles()
             self.move_obstacles()
@@ -263,7 +290,7 @@ class Environment:
                     self.evaluatedCars.append(car)
                 return self.cars
 
-            # Draw frame
+            # Draw current frame
             self.draw()
             pygame.display.flip()
             self.clock.tick(30)
