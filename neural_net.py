@@ -6,15 +6,17 @@ import math
 import random
 
 
-# Connection class to store connections between nodes in the network
 class Connection:
+    """Connection class to store connections between nodes in the network"""
+
     def __init__(self, connected_node):
         self.connected_node = connected_node  # Node on the previous layer
-        self.weight = random.normalvariate(0, 1)  # Generating random weight from gaussian distribution (µ=0, σ=1)
+        self.weight = random.normalvariate(0, 1)  # Generating random weight from gaussian distribution (mu=0, sigma=1)
 
 
-# Node class for network. These are connected to each other through the connection class.
 class Node:
+    """Node class for network. These are connected to each other through the connection class."""
+
     def __init__(self, prev_layer):
         self.connections = []  # Store all connection objects to previous layer
         self.output = 0.0  # Default output value
@@ -28,8 +30,8 @@ class Node:
                 connection = Connection(node)
                 self.connections.append(connection)
 
-    # Propagate network through network to produce output
     def feed_forward(self):
+        """Propagate network through network to produce output"""
         sum_output = 0
         if len(self.connections) == 0:
             return
@@ -39,24 +41,25 @@ class Node:
 
     @staticmethod
     def sigmoid(x):
-        # Simple static function to flatten input between -1 and 1
+        """Simple static function to flatten input between -1 and 1"""
         return 1 / (1 + math.exp(-x * 1.0))
 
     def set_output(self, output):
-        # Sets the output of this node; required to set the values of the input layer
+        """Sets the output of this node; required to set the values of the input layer"""
         self.output = output
 
     def get_output(self):
-        # Returns the output value stored in this node
+        """Returns the output value stored in this node"""
         return self.output
 
 
-# Network to act as 'brain' for each car. Created from the nodes and connections previously defined.
-# Requires a parameter, topology; a list which specifies the number of nodes on each layer.
-# eg. [2,3,1] creates a network with input layer of 2, hidden (middle) layer of 3 and 1 on the output layer.
 class Network:
+    """ Network to act as 'brain' for each car. Created from the nodes and connections previously defined.
+     Requires a parameter, topology; a list which specifies the number of nodes on each layer.
+     eg. [2,3,1] creates a network with input layer of 2, hidden (middle) layer of 3 and 1 on the output layer."""
+
     def __init__(self, topology):
-        # Creates the entire network of the defined structure with random weights and biases.
+        """Creates the entire network of the defined structure with random weights and biases."""
         self.layers = []
         self.topology = topology
         layer_number = 0
@@ -83,14 +86,14 @@ class Network:
             # Add layer to list of all the layers of the network
 
     def print_network_structure(self):
-        # Function to output the topology eg. [2,3,1] including the bias nodes for debugging purposes.
+        """Function to output the topology eg. [2,3,1] including the bias nodes for debugging purposes."""
         structure = []
         for layer in self.layers:
             structure.append(len(layer))
         print("Initiated Neural network with structure: ", structure)
 
     def print_network_weights(self):
-        # Function to output the values of each connection in network for debugging purposes.
+        """Function to output the values of each connection in network for debugging purposes."""
         for layerI in range(len(self.layers)):
             layer = []
             for node in self.layers[layerI]:
@@ -100,8 +103,8 @@ class Network:
         print("")
 
     def get_network_weights(self):
-        # Returns the weights of the network in a specific order.
-        # Required when creating child networks from current one.
+        """Returns the weights of the network in a specific order.
+        Required when creating child networks from current one."""
         layers = []
         for layer in self.layers:
             for node in layer:
@@ -110,9 +113,10 @@ class Network:
         return layers
 
     def set_network_weights(self, weights):
-        # Sets the weights of this network to the ones provided in the list.
-        # Required for setting weights of child network.
-        # Order of weights same as outputted by the function get_network_weights()
+        """Sets the weights of this network to the ones provided in the list.
+        Required for setting weights of child network.
+        Order of weights same as outputted by the function get_network_weights()"""
+
         i = 0
         for layer in self.layers:
             for node in layer:
@@ -123,25 +127,25 @@ class Network:
                     i += 1
 
     def set_inputs(self, inputs):
-        # Sets the values of the nodes on the input layer to the ones in the list provided
+        """Sets the values of the nodes on the input layer to the ones in the list provided"""
         for i in range(len(inputs)):
             self.layers[0][i].set_output(inputs[i])
 
     def feed_forward(self):
-        # Propagates values through node
+        """Propagates values through node"""
         for layer in self.layers[1:]:
             for node in layer:
                 node.feed_forward()
 
     def get_results(self):
-        # Returns output value from the output layer
+        """Returns output value from the output layer"""
         output = []
         for node in self.layers[-1]:
             output.append(node.get_output())
         return output
 
     def get_decision(self):
-        # Generates decision from value returned from the function get_results()
+        """Generates decision from value returned from the function get_results()"""
         if self.layers[-1][0].get_output() > self.layers[-1][1].get_output():
             return "left"
         elif self.layers[-1][0].get_output() < self.layers[-1][1].get_output():

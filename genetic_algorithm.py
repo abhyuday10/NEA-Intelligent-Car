@@ -7,8 +7,9 @@ import constants
 
 
 class Code:
-    # Code class to manage all data for one entity.
-    # This unique code is what represents a solution.
+    """Code class to manage all data for one entity.
+    This unique code is what represents a solution."""
+
     def __init__(self, topology):
         self.topology = topology
 
@@ -27,13 +28,13 @@ class Code:
         self.fittest = False
 
     def set_weights(self, weights):
-        # Setter function to set weights of the neural network
+        """Setter function to set weights of the neural network"""
         self.brain.set_network_weights(weights)
         self.weights = weights
 
 
 def generate_population(pool_size, topology):
-    # Function to generate population of random members
+    """Function to generate population of random members"""
     pool = []
     for solution in range(pool_size):
         member = Code(topology)
@@ -42,7 +43,7 @@ def generate_population(pool_size, topology):
 
 
 def produce_child_solution(first, second):
-    # Crossover to create one child base on probability.
+    """Crossover to create one child base on probability."""
     if random.uniform(0, 1) <= constants.CROSSOVER_RATE:
         # Only creates child if required probability met.
 
@@ -65,7 +66,7 @@ def produce_child_solution(first, second):
 
 
 def mutate(solution):
-    # Mutation of one solution to give random features
+    """Mutation of one solution to give random features"""
     weights = solution.weights
 
     for i in range(0, len(weights) - 1):
@@ -78,9 +79,9 @@ def mutate(solution):
 
 
 def choose_parent(population):
-    # Roulette parent selection
-    # algorithm to choose an individual from population with members with higher fitness
-    # having a greater probability of being selected.
+    """Roulette parent selection
+    algorithm to choose an individual from population with members with higher fitness
+    having a greater probability of being selected."""
     population_fitness = 0
     for i in population:
         population_fitness += i.fitness

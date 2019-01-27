@@ -8,14 +8,16 @@ import matplotlib.pyplot as plt  # For graphing the data
 import constants
 
 
-# Set all members' fitness to 0
 def reset_fittest(population):
+    """Set all members' fitness to 0"""
     for solution in population:
         solution.fittest = False
     return population
 
 
-def main():
+def train():
+    """Function that begins the training process"""
+
     # Setup Graphing variables
     generation_fitnesses = []  # To store average fitness for each generation (y coordinate)
     figure = plt.figure(figsize=(6, 3))
@@ -108,4 +110,4 @@ def main():
 
 print("")
 if __name__ == '__main__':
-    main()
+    train()

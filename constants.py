@@ -1,3 +1,5 @@
+"""Constant values that are used throughout the program."""
+
 # Colours for UI rendering in RGB format
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
