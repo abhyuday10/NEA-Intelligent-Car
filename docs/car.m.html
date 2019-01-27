@@ -1,0 +1,2421 @@
+<!doctype html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+
+    <title>car API documentation</title>
+    <meta name="description" content="Car module to manage all data for one car. Each car represents a solution in the environment. Perfor..." />
+
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
+  
+  <style type="text/css">
+  
+* {
+  box-sizing: border-box;
+}
+/*! normalize.css v1.1.1 | MIT License | git.io/normalize */
+
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+
+/**
+ * Correct `block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+    display: block;
+}
+
+/**
+ * Correct `inline-block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+audio,
+canvas,
+video {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+/**
+ * Prevent modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Firefox 3, and Safari 4.
+ * Known issue: no IE 6 support.
+ */
+
+[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+/**
+ * 1. Prevent system color scheme's background color being used in Firefox, IE,
+ *    and Opera.
+ * 2. Prevent system color scheme's text color being used in Firefox, IE, and
+ *    Opera.
+ * 3. Correct text resizing oddly in IE 6/7 when body `font-size` is set using
+ *    `em` units.
+ * 4. Prevent iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+
+html {
+    background: #fff; /* 1 */
+    color: #000; /* 2 */
+    font-size: 100%; /* 3 */
+    -webkit-text-size-adjust: 100%; /* 4 */
+    -ms-text-size-adjust: 100%; /* 4 */
+}
+
+/**
+ * Address `font-family` inconsistency between `textarea` and other form
+ * elements.
+ */
+
+html,
+button,
+input,
+select,
+textarea {
+    font-family: sans-serif;
+}
+
+/**
+ * Address margins handled incorrectly in IE 6/7.
+ */
+
+body {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+
+/**
+ * Address `outline` inconsistency between Chrome and other browsers.
+ */
+
+a:focus {
+    outline: thin dotted;
+}
+
+/**
+ * Improve readability when focused and also mouse hovered in all browsers.
+ */
+
+a:active,
+a:hover {
+    outline: 0;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+/**
+ * Address font sizes and margins set differently in IE 6/7.
+ * Address font sizes within `section` and `article` in Firefox 4+, Safari 5,
+ * and Chrome.
+ */
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin: 0.83em 0;
+}
+
+h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+}
+
+h4 {
+    font-size: 1em;
+    margin: 1.33em 0;
+}
+
+h5 {
+    font-size: 0.83em;
+    margin: 1.67em 0;
+}
+
+h6 {
+    font-size: 0.67em;
+    margin: 2.33em 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Safari 5, and Chrome.
+ */
+
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+
+/**
+ * Address style set to `bolder` in Firefox 3+, Safari 4/5, and Chrome.
+ */
+
+b,
+strong {
+    font-weight: bold;
+}
+
+blockquote {
+    margin: 1em 40px;
+}
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+
+dfn {
+    font-style: italic;
+}
+
+/**
+ * Address differences between Firefox and other browsers.
+ * Known issue: no IE 6/7 normalization.
+ */
+
+hr {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 6/7/8/9.
+ */
+
+mark {
+    background: #ff0;
+    color: #000;
+}
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+p,
+pre {
+    margin: 1em 0;
+}
+
+/**
+ * Correct font family set oddly in IE 6, Safari 4/5, and Chrome.
+ */
+
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, serif;
+    _font-family: 'courier new', monospace;
+    font-size: 1em;
+}
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+
+pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/**
+ * Address CSS quotes not supported in IE 6/7.
+ */
+
+q {
+    quotes: none;
+}
+
+/**
+ * Address `quotes` property not supported in Safari 4.
+ */
+
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+
+small {
+    font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sup {
+    top: -0.5em;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+dl,
+menu,
+ol,
+ul {
+    margin: 1em 0;
+}
+
+dd {
+    margin: 0 0 0 40px;
+}
+
+/**
+ * Address paddings set differently in IE 6/7.
+ */
+
+menu,
+ol,
+ul {
+    padding: 0 0 0 40px;
+}
+
+/**
+ * Correct list images handled incorrectly in IE 7.
+ */
+
+nav ul,
+nav ol {
+    list-style: none;
+    list-style-image: none;
+}
+
+/* ==========================================================================
+   Embedded content
+   ========================================================================== */
+
+/**
+ * 1. Remove border when inside `a` element in IE 6/7/8/9 and Firefox 3.
+ * 2. Improve image quality when scaled in IE 7.
+ */
+
+img {
+    border: 0; /* 1 */
+    -ms-interpolation-mode: bicubic; /* 2 */
+}
+
+/**
+ * Correct overflow displayed oddly in IE 9.
+ */
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Figures
+   ========================================================================== */
+
+/**
+ * Address margin not present in IE 6/7/8/9, Safari 5, and Opera 11.
+ */
+
+figure {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+/**
+ * Correct margin displayed oddly in IE 6/7.
+ */
+
+form {
+    margin: 0;
+}
+
+/**
+ * Define consistent border, margin, and padding.
+ */
+
+fieldset {
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+/**
+ * 1. Correct color not being inherited in IE 6/7/8/9.
+ * 2. Correct text not wrapping in Firefox 3.
+ * 3. Correct alignment displayed oddly in IE 6/7.
+ */
+
+legend {
+    border: 0; /* 1 */
+    padding: 0;
+    white-space: normal; /* 2 */
+    *margin-left: -7px; /* 3 */
+}
+
+/**
+ * 1. Correct font size not being inherited in all browsers.
+ * 2. Address margins set differently in IE 6/7, Firefox 3+, Safari 5,
+ *    and Chrome.
+ * 3. Improve appearance and consistency in all browsers.
+ */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%; /* 1 */
+    margin: 0; /* 2 */
+    vertical-align: baseline; /* 3 */
+    *vertical-align: middle; /* 3 */
+}
+
+/**
+ * Address Firefox 3+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+
+button,
+input {
+    line-height: normal;
+}
+
+/**
+ * Address inconsistent `text-transform` inheritance for `button` and `select`.
+ * All other form control elements do not inherit `text-transform` values.
+ * Correct `button` style inheritance in Chrome, Safari 5+, and IE 6+.
+ * Correct `select` style inheritance in Firefox 4+ and Opera.
+ */
+
+button,
+select {
+    text-transform: none;
+}
+
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ * 4. Remove inner spacing in IE 7 without affecting normal text inputs.
+ *    Known issue: inner spacing remains in IE 6.
+ */
+
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+    -webkit-appearance: button; /* 2 */
+    cursor: pointer; /* 3 */
+    *overflow: visible;  /* 4 */
+}
+
+/**
+ * Re-set default cursor for disabled elements.
+ */
+
+button[disabled],
+html input[disabled] {
+    cursor: default;
+}
+
+/**
+ * 1. Address box sizing set to content-box in IE 8/9.
+ * 2. Remove excess padding in IE 8/9.
+ * 3. Remove excess padding in IE 7.
+ *    Known issue: excess padding remains in IE 6.
+ */
+
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box; /* 1 */
+    padding: 0; /* 2 */
+    *height: 13px; /* 3 */
+    *width: 13px; /* 3 */
+}
+
+/**
+ * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
+ * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
+ *    (include `-moz` to future-proof).
+ */
+
+input[type="search"] {
+    -webkit-appearance: textfield; /* 1 */
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box; /* 2 */
+    box-sizing: content-box;
+}
+
+/**
+ * Remove inner padding and search cancel button in Safari 5 and Chrome
+ * on OS X.
+ */
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+/**
+ * Remove inner padding and border in Firefox 3+.
+ */
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+/**
+ * 1. Remove default vertical scrollbar in IE 6/7/8/9.
+ * 2. Improve readability and alignment in all browsers.
+ */
+
+textarea {
+    overflow: auto; /* 1 */
+    vertical-align: top; /* 2 */
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+/**
+ * Remove most spacing between table cells.
+ */
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+  </style>
+
+  <style type="text/css">
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+  body {
+    background: #fff;
+    font-family: "Source Sans Pro", "Helvetica Neueue", Helvetica, sans;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.6em;
+  }
+  #content {
+    width: 70%;
+    max-width: 850px;
+    float: left;
+    padding: 30px 60px;
+    border-left: 1px solid #ddd;
+  }
+  #sidebar {
+    width: 25%;
+    float: left;
+    padding: 30px;
+    overflow: hidden;
+  }
+  #nav {
+    font-size: 130%;
+    margin: 0 0 15px 0;
+  }
+
+  #top {
+    display: block;
+    position: fixed;
+    bottom: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+  }
+
+  #footer {
+    font-size: .75em;
+    padding: 5px 30px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+  }
+    #footer p {
+      margin: 0 0 0 30px;
+      display: inline-block;
+    }
+
+  h1, h2, h3, h4, h5 {
+    font-weight: 300;
+  }
+  h1 {
+    font-size: 2.5em;
+    line-height: 1.1em;
+    margin: 0 0 .50em 0;
+  }
+
+  h2 {
+    font-size: 1.75em;
+    margin: 1em 0 .50em 0;
+  }
+
+  h3 {
+    margin: 25px 0 10px 0;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 105%;
+  }
+
+  a {
+    color: #058;
+    text-decoration: none;
+    transition: color .3s ease-in-out;
+  }
+
+  a:hover {
+    color: #e08524;
+    transition: color .3s ease-in-out;
+  }
+
+  pre, code, .mono, .name {
+    font-family: "Ubuntu Mono", "Cousine", "DejaVu Sans Mono", monospace;
+  }
+
+  .title .name {
+    font-weight: bold;
+  }
+  .section-title {
+    margin-top: 2em;
+  }
+  .ident {
+    color: #900;
+  }
+
+  code {
+    background: #f9f9f9;
+  } 
+
+  pre {
+    background: #fefefe;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 0 #f3f3f3;
+    margin: 0 30px;
+    padding: 15px 30px;
+  }
+
+  .codehilite {
+    margin: 0 30px 10px 30px;
+  }
+
+    .codehilite pre {
+      margin: 0;
+    }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
+
+  table#module-list {
+    font-size: 110%;
+  }
+
+    table#module-list tr td:first-child {
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+
+    table#module-list td {
+      vertical-align: top;
+      padding-bottom: 8px;
+    }
+
+      table#module-list td p {
+        margin: 0 0 7px 0;
+      }
+
+  .def {
+    display: table;
+  }
+
+    .def p {
+      display: table-cell;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .def p:first-child {
+      white-space: nowrap;
+    }
+
+    .def p:last-child {
+      width: 100%;
+    }
+
+
+  #index {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+    ul#index .class_name {
+      /* font-size: 110%; */
+      font-weight: bold;
+    }
+    #index ul {
+      margin: 0;
+    }
+
+  .item {
+    margin: 0 0 15px 0;
+  }
+
+    .item .class {
+      margin: 0 0 25px 30px;
+    }
+
+      .item .class ul.class_list {
+        margin: 0 0 20px 0;
+      }
+
+    .item .name {
+      background: #fafafa;
+      margin: 0;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 3px;
+      display: inline-block;
+      min-width: 40%;
+    }
+      .item .name:hover {
+        background: #f6f6f6;
+      }
+
+    .item .empty_desc {
+      margin: 0 0 5px 0;
+      padding: 0;
+    }
+
+    .item .inheritance {
+      margin: 3px 0 0 30px;
+    }
+
+    .item .inherited {
+      color: #666;
+    }
+
+    .item .desc {
+      padding: 0 8px;
+      margin: 0;
+    }
+
+      .item .desc p {
+        margin: 0 0 10px 0;
+      }
+
+    .source_cont {
+      margin: 0;
+      padding: 0;
+    }
+
+    .source_link a {
+      background: #ffc300;
+      font-weight: 400;
+      font-size: .75em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 1px 1px 0 #f4b700;
+      
+      padding: 3px 8px;
+      border-radius: 2px;
+      transition: background .3s ease-in-out;
+    }
+      .source_link a:hover {
+        background: #FF7200;
+        text-shadow: none;
+        transition: background .3s ease-in-out;
+      }
+
+    .source {
+      display: none;
+      max-height: 600px;
+      overflow-y: scroll;
+      margin-bottom: 15px;
+    }
+
+      .source .codehilite {
+        margin: 0;
+      }
+
+  .desc h1, .desc h2, .desc h3 {
+    font-size: 100% !important;
+  }
+  .clear {
+    clear: both;
+  }
+
+  @media all and (max-width: 950px) {
+    #sidebar {
+      width: 35%;
+    }
+    #content {
+      width: 65%;
+    }
+  }
+  @media all and (max-width: 650px) {
+    #top {
+      display: none;
+    }
+    #sidebar {
+      float: none;
+      width: auto;
+    }
+    #content {
+      float: none;
+      width: auto;
+      padding: 30px;
+    }
+
+    #index ul {
+      padding: 0;
+      margin-bottom: 15px;
+    }
+    #index ul li {
+      display: inline-block;
+      margin-right: 30px;
+    }
+    #footer {
+      text-align: left;
+    }
+    #footer p {
+      display: block;
+      margin: inherit;
+    }
+  }
+
+  /*****************************/
+
+  </style>
+
+
+  <style type="text/css">
+  
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /* Style adjustments for viewports that meet the condition */
+}
+
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+    /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
+
+  </style>
+
+  <script type="text/javascript">
+  function toggle(id, $link) {
+    $node = document.getElementById(id);
+    if (!$node)
+    return;
+    if (!$node.style.display || $node.style.display == 'none') {
+    $node.style.display = 'block';
+    $link.innerHTML = 'Hide source &nequiv;';
+    } else {
+    $node.style.display = 'none';
+    $link.innerHTML = 'Show source &equiv;';
+    }
+  }
+  </script>
+</head>
+<body>
+<a href="#" id="top">Top</a>
+
+<div id="container">
+    
+  
+  <div id="sidebar">
+    <h1>Index</h1>
+    <ul id="index">
+
+
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
+      <ul>
+        <li class="mono">
+        <span class="class_name"><a href="#car.Car">Car</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#car.Car.__init__">__init__</a></li>
+    <li class="mono"><a href="#car.Car.add">add</a></li>
+    <li class="mono"><a href="#car.Car.add_internal">add_internal</a></li>
+    <li class="mono"><a href="#car.Car.alive">alive</a></li>
+    <li class="mono"><a href="#car.Car.calculate_fitness">calculate_fitness</a></li>
+    <li class="mono"><a href="#car.Car.check_if_crashed">check_if_crashed</a></li>
+    <li class="mono"><a href="#car.Car.check_if_point_in_any_border">check_if_point_in_any_border</a></li>
+    <li class="mono"><a href="#car.Car.check_if_point_in_any_obstacle">check_if_point_in_any_obstacle</a></li>
+    <li class="mono"><a href="#car.Car.check_inside_circle">check_inside_circle</a></li>
+    <li class="mono"><a href="#car.Car.check_inside_rect">check_inside_rect</a></li>
+    <li class="mono"><a href="#car.Car.draw">draw</a></li>
+    <li class="mono"><a href="#car.Car.feed_forward">feed_forward</a></li>
+    <li class="mono"><a href="#car.Car.get_arm_distance">get_arm_distance</a></li>
+    <li class="mono"><a href="#car.Car.get_outputs">get_outputs</a></li>
+    <li class="mono"><a href="#car.Car.get_rotated_point">get_rotated_point</a></li>
+    <li class="mono"><a href="#car.Car.get_sensor_data">get_sensor_data</a></li>
+    <li class="mono"><a href="#car.Car.get_sensor_readings">get_sensor_readings</a></li>
+    <li class="mono"><a href="#car.Car.groups">groups</a></li>
+    <li class="mono"><a href="#car.Car.kill">kill</a></li>
+    <li class="mono"><a href="#car.Car.make_sensor_arm">make_sensor_arm</a></li>
+    <li class="mono"><a href="#car.Car.move_forward">move_forward</a></li>
+    <li class="mono"><a href="#car.Car.remove">remove</a></li>
+    <li class="mono"><a href="#car.Car.remove_internal">remove_internal</a></li>
+    <li class="mono"><a href="#car.Car.rotate_left">rotate_left</a></li>
+    <li class="mono"><a href="#car.Car.rotate_right">rotate_right</a></li>
+    <li class="mono"><a href="#car.Car.set_inputs">set_inputs</a></li>
+    <li class="mono"><a href="#car.Car.update">update</a></li>
+  </ul>
+
+        </li>
+      </ul>
+    </li>
+
+    </ul>
+  </div>
+
+    <article id="content">
+      
+  
+
+  
+
+
+  <header id="section-intro">
+  <h1 class="title"><span class="name">car</span> module</h1>
+  <p>Car module to manage all data for one car. Each car represents a solution in the environment. Performance of car in environment determines the strength of that solution.</p>
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car', this);">Show source &equiv;</a></p>
+  <div id="source-car" class="source">
+    <pre><code>"""Car module to manage all data for one car. Each car represents a solution in the environment. Performance of car in environment determines the strength of that solution."""
+
+import pygame
+import math
+import environment as env
+import constants
+
+
+class Car(pygame.sprite.Sprite):
+    """Defining the car class which inherits properties from the Pygame sprite class"""
+
+    DELTA_ANGLE = 5.5  # Specifies the maximum rotation vector on each frame
+    SPEED = 5  # Specifies the maximum movement possible on each frame
+
+    def __init__(self, solution, x, y):
+        # Initialise the sprite masterclass
+        pygame.sprite.Sprite.__init__(self)
+
+        # Initialise images required for rendering
+        self.boom = pygame.image.load("images/explosion.png")
+        self.boom = pygame.transform.scale(self.boom, (50, 50))
+
+        if solution.fittest:
+            # Load image of different colour car if this member is the fittest from previous generation
+            self.image = pygame.image.load("images/car_fit.png")
+        else:
+            # Otherwise load default car
+            self.image = pygame.image.load("images/car.png")
+
+        # Scale the image for the environment
+        self.image = pygame.transform.scale(self.image, (30, 60))
+        self.orig_image = self.image
+
+        # Create mask from image. Mask contains each pixel overlapping the image in the environment.
+        # Required for pixel perfect collision detection at the cost of evaluation time.
+        self.mask = pygame.mask.from_surface(self.image)
+
+        # Create rectangle to store car coordinates
+        self.pos = [x, y]
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+
+        # Store current angle car is facing.
+        self.angle = 0
+        # Boolean to store whether the car has collided in the environment.
+        self.crashed = False
+
+        # Store location of obstacles and screen boundary to check for collisions
+        self.obstacles = None
+        self.borders = None
+
+        # Store the solution representing this car
+        self.solution = solution
+
+        # Imputs and outputs for the neural network making decisions for this car.
+        self.inputs = None
+        self.output = None
+
+    def rotate_right(self):
+        """Rotate car by maximum angle specified"""
+        self.angle = (self.angle - self.DELTA_ANGLE) % -360
+
+    def rotate_left(self):
+        """Rotate car by maximum angle specified"""
+        self.angle = (self.angle + self.DELTA_ANGLE) % -360
+
+    def move_forward(self):
+        """Trigonometric function to determine new position based on the angle car is facing."""
+        dx = math.cos(math.radians(self.angle + 90))
+        dy = math.sin(math.radians(self.angle + 90))
+
+        # Update position of car
+        self.pos = self.pos[0] + (dx * self.SPEED), self.pos[1] - (dy * self.SPEED)
+        self.rect.center = self.pos
+
+    def update(self):
+        """Overriding the default Pygame update method
+        Update mask and collision state"""
+        self.mask = pygame.mask.from_surface(self.image)
+        self.crashed = self.check_if_crashed()
+
+    # Helper methods to get and set neural network values
+    def set_inputs(self, inputs):
+        self.solution.brain.set_inputs(inputs)
+
+    def feed_forward(self):
+        self.solution.brain.feed_forward()
+
+    def get_outputs(self):
+        return self.solution.brain.get_decision()
+
+    def calculate_fitness(self, time):
+        """Simple algorithm to determine fitness from time spent in environment
+        Can be adjusted to make fitness increase exponentially with time"""
+        fitness = math.pow(time, 1)
+        self.solution.fitness = fitness
+
+    def draw(self):
+        """Method to draw car data on this frame to the Pygame screen.
+        Rotate image to the angle the car is currently facing."""
+
+        self.image = pygame.transform.rotate(self.orig_image, self.angle)
+        self.rect = self.image.get_rect(center=self.rect.center)
+        # Rendering the image to the current coordinates of the car.
+        env.Environment.screen.blit(self.image, self.rect)
+
+    def check_if_crashed(self):
+        """Algorithm to check if car has crashed by checking overlaps"""
+        sample_points = []
+        outline_points = self.mask.outline()
+        # Samples points by checking every tenth point in the car outline to reduce time required
+        for i in range(len(outline_points)):
+            if i % 10 == 0:
+                sample_points.append(outline_points[i])
+
+        # Points need to be offsetted as mask does not store absolute position
+        for point in sample_points:
+            offsetted_mask_point = [0, 0]
+            offsetted_mask_point[0] = point[0] + self.rect[0]
+            offsetted_mask_point[1] = point[1] + self.rect[1]
+
+            # Checks for overlaps between sampled points to check if crashed into object
+            if self.check_if_point_in_any_obstacle(offsetted_mask_point) or self.check_if_point_in_any_border(
+                    offsetted_mask_point):
+                adjusted_rect = [offsetted_mask_point[0] - 25, offsetted_mask_point[1] - 25]
+
+                env.Environment.screen.blit(self.boom, adjusted_rect)  # Display collision graphic if crashed
+                return True
+        return False
+
+    def get_arm_distance(self, arm, x, y, angle, offset):
+        """Function to return sensor distance to objects"""
+
+        i = 0  # Used to count the distance.
+        # Look at each point and see if we've hit something.
+
+        for point in arm:
+            i += 1
+            # Move the point to the right spot.
+            rotated_p = self.get_rotated_point(
+                x, y, point[0], point[1], angle + offset
+            )
+
+            # Check if we've hit something. Return the current i (distance) if we did.
+            if rotated_p[0] <= 0 or rotated_p[1] <= 0 \
+                    or rotated_p[0] >= env.Environment.width or rotated_p[1] >= env.Environment.height:
+                return i  # Sensor is off the screen.
+            elif self.check_if_point_in_any_obstacle(rotated_p):
+                return i
+
+            elif constants.DRAW_SENSORS:  # Only render sensor arms is specified
+                pygame.draw.circle(env.Environment.screen, constants.BLACK, rotated_p, 2)
+
+        # Return the distance for the arm.
+        return i
+
+    def check_if_point_in_any_border(self, point):
+        """Method to check for border intersection with a point"""
+        for border in self.borders:
+            if self.check_inside_rect(point[0], point[1], border):
+                return True
+        return False
+
+    def check_if_point_in_any_obstacle(self, point):
+        """Method to check for obstacle intersection with a point"""
+        for obstacle in self.obstacles:
+            if self.check_inside_circle(point[0], point[1], obstacle.pos[0], obstacle.pos[1], obstacle.radius):
+                return True
+        return False
+
+    # Static helper methods to check for point intersections with circles and rectangles
+    @staticmethod
+    def check_inside_rect(x, y, rect):
+        return (rect[0] + rect[2]) > x > rect[0] and (rect[1] + rect[3]) > y > rect[1]
+
+    @staticmethod
+    def check_inside_circle(x, y, a, b, r):
+        return (x - a) * (x - a) + (y - b) * (y - b) < r * r
+
+    def get_sensor_data(self):
+        """Method to get sensors readings for the car"""
+        return self.get_sensor_readings(self.rect.center[0], self.rect.center[1], math.radians(abs(self.angle) - 90))
+
+    def get_sensor_readings(self, x, y, angle):
+        """Return the values of each sensor in a list"""
+        readings = []  # List to store each sensor value
+
+        # Make our arms
+        arm_left = self.make_sensor_arm(x, y)
+        arm_middle = arm_left
+        arm_right = arm_left
+
+        # Rotate them and get readings.
+        readings.append(self.get_arm_distance(arm_left, x, y, angle, 0.75))
+        readings.append(self.get_arm_distance(arm_left, x, y, angle, 1.55))
+        readings.append(self.get_arm_distance(arm_middle, x, y, angle, 0))
+        readings.append(self.get_arm_distance(arm_left, x, y, angle, -1.55))
+        readings.append(self.get_arm_distance(arm_right, x, y, angle, -0.75))
+
+        return readings
+
+    @staticmethod
+    def make_sensor_arm(x, y):
+        """Method to create array of points representing one arm of sensor."""
+
+        spread = 16  # Default spread between sensor points.
+        distance = 10  # Gap before first sensor point.
+        arm_points = []
+
+        # Make an arm.
+        for i in range(1, 15):
+            arm_points.append((distance + x + (spread * i), y))
+        return arm_points
+
+    @staticmethod
+    def get_rotated_point(x_1, y_1, x_2, y_2, radians):
+        """Algorithm to rotate a point by an angle around another point.
+        Rotate x_2, y_2 around x_1, y_1 by angle."""
+        x_change = (x_2 - x_1) * math.cos(radians) + \
+                   (y_2 - y_1) * math.sin(radians)
+        y_change = (y_1 - y_2) * math.cos(radians) - \
+                   (x_1 - x_2) * math.sin(radians)
+        new_x = x_change + x_1
+        new_y = y_change + y_1
+        return int(new_x), int(new_y)
+</code></pre>
+  </div>
+
+  </header>
+
+  <section id="section-items">
+
+
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
+      <div class="item">
+      <p id="car.Car" class="name">class <span class="ident">Car</span></p>
+      
+  
+    <div class="desc"><p>Defining the car class which inherits properties from the Pygame sprite class</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car" class="source">
+    <pre><code>class Car(pygame.sprite.Sprite):
+    """Defining the car class which inherits properties from the Pygame sprite class"""
+
+    DELTA_ANGLE = 5.5  # Specifies the maximum rotation vector on each frame
+    SPEED = 5  # Specifies the maximum movement possible on each frame
+
+    def __init__(self, solution, x, y):
+        # Initialise the sprite masterclass
+        pygame.sprite.Sprite.__init__(self)
+
+        # Initialise images required for rendering
+        self.boom = pygame.image.load("images/explosion.png")
+        self.boom = pygame.transform.scale(self.boom, (50, 50))
+
+        if solution.fittest:
+            # Load image of different colour car if this member is the fittest from previous generation
+            self.image = pygame.image.load("images/car_fit.png")
+        else:
+            # Otherwise load default car
+            self.image = pygame.image.load("images/car.png")
+
+        # Scale the image for the environment
+        self.image = pygame.transform.scale(self.image, (30, 60))
+        self.orig_image = self.image
+
+        # Create mask from image. Mask contains each pixel overlapping the image in the environment.
+        # Required for pixel perfect collision detection at the cost of evaluation time.
+        self.mask = pygame.mask.from_surface(self.image)
+
+        # Create rectangle to store car coordinates
+        self.pos = [x, y]
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+
+        # Store current angle car is facing.
+        self.angle = 0
+        # Boolean to store whether the car has collided in the environment.
+        self.crashed = False
+
+        # Store location of obstacles and screen boundary to check for collisions
+        self.obstacles = None
+        self.borders = None
+
+        # Store the solution representing this car
+        self.solution = solution
+
+        # Imputs and outputs for the neural network making decisions for this car.
+        self.inputs = None
+        self.output = None
+
+    def rotate_right(self):
+        """Rotate car by maximum angle specified"""
+        self.angle = (self.angle - self.DELTA_ANGLE) % -360
+
+    def rotate_left(self):
+        """Rotate car by maximum angle specified"""
+        self.angle = (self.angle + self.DELTA_ANGLE) % -360
+
+    def move_forward(self):
+        """Trigonometric function to determine new position based on the angle car is facing."""
+        dx = math.cos(math.radians(self.angle + 90))
+        dy = math.sin(math.radians(self.angle + 90))
+
+        # Update position of car
+        self.pos = self.pos[0] + (dx * self.SPEED), self.pos[1] - (dy * self.SPEED)
+        self.rect.center = self.pos
+
+    def update(self):
+        """Overriding the default Pygame update method
+        Update mask and collision state"""
+        self.mask = pygame.mask.from_surface(self.image)
+        self.crashed = self.check_if_crashed()
+
+    # Helper methods to get and set neural network values
+    def set_inputs(self, inputs):
+        self.solution.brain.set_inputs(inputs)
+
+    def feed_forward(self):
+        self.solution.brain.feed_forward()
+
+    def get_outputs(self):
+        return self.solution.brain.get_decision()
+
+    def calculate_fitness(self, time):
+        """Simple algorithm to determine fitness from time spent in environment
+        Can be adjusted to make fitness increase exponentially with time"""
+        fitness = math.pow(time, 1)
+        self.solution.fitness = fitness
+
+    def draw(self):
+        """Method to draw car data on this frame to the Pygame screen.
+        Rotate image to the angle the car is currently facing."""
+
+        self.image = pygame.transform.rotate(self.orig_image, self.angle)
+        self.rect = self.image.get_rect(center=self.rect.center)
+        # Rendering the image to the current coordinates of the car.
+        env.Environment.screen.blit(self.image, self.rect)
+
+    def check_if_crashed(self):
+        """Algorithm to check if car has crashed by checking overlaps"""
+        sample_points = []
+        outline_points = self.mask.outline()
+        # Samples points by checking every tenth point in the car outline to reduce time required
+        for i in range(len(outline_points)):
+            if i % 10 == 0:
+                sample_points.append(outline_points[i])
+
+        # Points need to be offsetted as mask does not store absolute position
+        for point in sample_points:
+            offsetted_mask_point = [0, 0]
+            offsetted_mask_point[0] = point[0] + self.rect[0]
+            offsetted_mask_point[1] = point[1] + self.rect[1]
+
+            # Checks for overlaps between sampled points to check if crashed into object
+            if self.check_if_point_in_any_obstacle(offsetted_mask_point) or self.check_if_point_in_any_border(
+                    offsetted_mask_point):
+                adjusted_rect = [offsetted_mask_point[0] - 25, offsetted_mask_point[1] - 25]
+
+                env.Environment.screen.blit(self.boom, adjusted_rect)  # Display collision graphic if crashed
+                return True
+        return False
+
+    def get_arm_distance(self, arm, x, y, angle, offset):
+        """Function to return sensor distance to objects"""
+
+        i = 0  # Used to count the distance.
+        # Look at each point and see if we've hit something.
+
+        for point in arm:
+            i += 1
+            # Move the point to the right spot.
+            rotated_p = self.get_rotated_point(
+                x, y, point[0], point[1], angle + offset
+            )
+
+            # Check if we've hit something. Return the current i (distance) if we did.
+            if rotated_p[0] <= 0 or rotated_p[1] <= 0 \
+                    or rotated_p[0] >= env.Environment.width or rotated_p[1] >= env.Environment.height:
+                return i  # Sensor is off the screen.
+            elif self.check_if_point_in_any_obstacle(rotated_p):
+                return i
+
+            elif constants.DRAW_SENSORS:  # Only render sensor arms is specified
+                pygame.draw.circle(env.Environment.screen, constants.BLACK, rotated_p, 2)
+
+        # Return the distance for the arm.
+        return i
+
+    def check_if_point_in_any_border(self, point):
+        """Method to check for border intersection with a point"""
+        for border in self.borders:
+            if self.check_inside_rect(point[0], point[1], border):
+                return True
+        return False
+
+    def check_if_point_in_any_obstacle(self, point):
+        """Method to check for obstacle intersection with a point"""
+        for obstacle in self.obstacles:
+            if self.check_inside_circle(point[0], point[1], obstacle.pos[0], obstacle.pos[1], obstacle.radius):
+                return True
+        return False
+
+    # Static helper methods to check for point intersections with circles and rectangles
+    @staticmethod
+    def check_inside_rect(x, y, rect):
+        return (rect[0] + rect[2]) > x > rect[0] and (rect[1] + rect[3]) > y > rect[1]
+
+    @staticmethod
+    def check_inside_circle(x, y, a, b, r):
+        return (x - a) * (x - a) + (y - b) * (y - b) < r * r
+
+    def get_sensor_data(self):
+        """Method to get sensors readings for the car"""
+        return self.get_sensor_readings(self.rect.center[0], self.rect.center[1], math.radians(abs(self.angle) - 90))
+
+    def get_sensor_readings(self, x, y, angle):
+        """Return the values of each sensor in a list"""
+        readings = []  # List to store each sensor value
+
+        # Make our arms
+        arm_left = self.make_sensor_arm(x, y)
+        arm_middle = arm_left
+        arm_right = arm_left
+
+        # Rotate them and get readings.
+        readings.append(self.get_arm_distance(arm_left, x, y, angle, 0.75))
+        readings.append(self.get_arm_distance(arm_left, x, y, angle, 1.55))
+        readings.append(self.get_arm_distance(arm_middle, x, y, angle, 0))
+        readings.append(self.get_arm_distance(arm_left, x, y, angle, -1.55))
+        readings.append(self.get_arm_distance(arm_right, x, y, angle, -0.75))
+
+        return readings
+
+    @staticmethod
+    def make_sensor_arm(x, y):
+        """Method to create array of points representing one arm of sensor."""
+
+        spread = 16  # Default spread between sensor points.
+        distance = 10  # Gap before first sensor point.
+        arm_points = []
+
+        # Make an arm.
+        for i in range(1, 15):
+            arm_points.append((distance + x + (spread * i), y))
+        return arm_points
+
+    @staticmethod
+    def get_rotated_point(x_1, y_1, x_2, y_2, radians):
+        """Algorithm to rotate a point by an angle around another point.
+        Rotate x_2, y_2 around x_1, y_1 by angle."""
+        x_change = (x_2 - x_1) * math.cos(radians) + \
+                   (y_2 - y_1) * math.sin(radians)
+        y_change = (y_1 - y_2) * math.cos(radians) - \
+                   (x_1 - x_2) * math.sin(radians)
+        new_x = x_change + x_1
+        new_y = y_change + y_1
+        return int(new_x), int(new_y)
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#car.Car">Car</a></li>
+          <li>pygame.sprite.Sprite</li>
+          <li>builtins.object</li>
+          </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="car.Car.DELTA_ANGLE" class="name">var <span class="ident">DELTA_ANGLE</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="car.Car.SPEED" class="name">var <span class="ident">SPEED</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Static methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="car.Car.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, solution, x, y)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Initialize self.  See help(type(self)) for accurate signature.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.__init__" class="source">
+    <pre><code>def __init__(self, solution, x, y):
+    # Initialise the sprite masterclass
+    pygame.sprite.Sprite.__init__(self)
+    # Initialise images required for rendering
+    self.boom = pygame.image.load("images/explosion.png")
+    self.boom = pygame.transform.scale(self.boom, (50, 50))
+    if solution.fittest:
+        # Load image of different colour car if this member is the fittest from previous generation
+        self.image = pygame.image.load("images/car_fit.png")
+    else:
+        # Otherwise load default car
+        self.image = pygame.image.load("images/car.png")
+    # Scale the image for the environment
+    self.image = pygame.transform.scale(self.image, (30, 60))
+    self.orig_image = self.image
+    # Create mask from image. Mask contains each pixel overlapping the image in the environment.
+    # Required for pixel perfect collision detection at the cost of evaluation time.
+    self.mask = pygame.mask.from_surface(self.image)
+    # Create rectangle to store car coordinates
+    self.pos = [x, y]
+    self.rect = self.image.get_rect()
+    self.rect.center = (x, y)
+    # Store current angle car is facing.
+    self.angle = 0
+    # Boolean to store whether the car has collided in the environment.
+    self.crashed = False
+    # Store location of obstacles and screen boundary to check for collisions
+    self.obstacles = None
+    self.borders = None
+    # Store the solution representing this car
+    self.solution = solution
+    # Imputs and outputs for the neural network making decisions for this car.
+    self.inputs = None
+    self.output = None
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.add">
+    <p>def <span class="ident">add</span>(</p><p>self, *groups)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>add the sprite to groups</p>
+<p>Sprite.add(*groups): return None</p>
+<p>Any number of Group instances can be passed as arguments. The
+Sprite will be added to the Groups it is not already a member of.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.add', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.add" class="source">
+    <pre><code>def add(self, *groups):
+    """add the sprite to groups
+    Sprite.add(*groups): return None
+    Any number of Group instances can be passed as arguments. The
+    Sprite will be added to the Groups it is not already a member of.
+    """
+    has = self.__g.__contains__
+    for group in groups:
+        if hasattr(group, '_spritegroup'):
+            if not has(group):
+                group.add_internal(self)
+                self.add_internal(group)
+        else:
+            self.add(*group)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.add_internal">
+    <p>def <span class="ident">add_internal</span>(</p><p>self, group)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.add_internal', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.add_internal" class="source">
+    <pre><code>def add_internal(self, group):
+    self.__g[group] = 0
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.alive">
+    <p>def <span class="ident">alive</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>does the sprite belong to any groups</p>
+<p>Sprite.alive(): return bool</p>
+<p>Returns True when the Sprite belongs to one or more Groups.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.alive', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.alive" class="source">
+    <pre><code>def alive(self):
+    """does the sprite belong to any groups
+    Sprite.alive(): return bool
+    Returns True when the Sprite belongs to one or more Groups.
+    """
+    return truth(self.__g)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.calculate_fitness">
+    <p>def <span class="ident">calculate_fitness</span>(</p><p>self, time)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Simple algorithm to determine fitness from time spent in environment
+Can be adjusted to make fitness increase exponentially with time</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.calculate_fitness', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.calculate_fitness" class="source">
+    <pre><code>def calculate_fitness(self, time):
+    """Simple algorithm to determine fitness from time spent in environment
+    Can be adjusted to make fitness increase exponentially with time"""
+    fitness = math.pow(time, 1)
+    self.solution.fitness = fitness
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.check_if_crashed">
+    <p>def <span class="ident">check_if_crashed</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Algorithm to check if car has crashed by checking overlaps</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.check_if_crashed', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.check_if_crashed" class="source">
+    <pre><code>def check_if_crashed(self):
+    """Algorithm to check if car has crashed by checking overlaps"""
+    sample_points = []
+    outline_points = self.mask.outline()
+    # Samples points by checking every tenth point in the car outline to reduce time required
+    for i in range(len(outline_points)):
+        if i % 10 == 0:
+            sample_points.append(outline_points[i])
+    # Points need to be offsetted as mask does not store absolute position
+    for point in sample_points:
+        offsetted_mask_point = [0, 0]
+        offsetted_mask_point[0] = point[0] + self.rect[0]
+        offsetted_mask_point[1] = point[1] + self.rect[1]
+        # Checks for overlaps between sampled points to check if crashed into object
+        if self.check_if_point_in_any_obstacle(offsetted_mask_point) or self.check_if_point_in_any_border(
+                offsetted_mask_point):
+            adjusted_rect = [offsetted_mask_point[0] - 25, offsetted_mask_point[1] - 25]
+            env.Environment.screen.blit(self.boom, adjusted_rect)  # Display collision graphic if crashed
+            return True
+    return False
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.check_if_point_in_any_border">
+    <p>def <span class="ident">check_if_point_in_any_border</span>(</p><p>self, point)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Method to check for border intersection with a point</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.check_if_point_in_any_border', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.check_if_point_in_any_border" class="source">
+    <pre><code>def check_if_point_in_any_border(self, point):
+    """Method to check for border intersection with a point"""
+    for border in self.borders:
+        if self.check_inside_rect(point[0], point[1], border):
+            return True
+    return False
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.check_if_point_in_any_obstacle">
+    <p>def <span class="ident">check_if_point_in_any_obstacle</span>(</p><p>self, point)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Method to check for obstacle intersection with a point</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.check_if_point_in_any_obstacle', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.check_if_point_in_any_obstacle" class="source">
+    <pre><code>def check_if_point_in_any_obstacle(self, point):
+    """Method to check for obstacle intersection with a point"""
+    for obstacle in self.obstacles:
+        if self.check_inside_circle(point[0], point[1], obstacle.pos[0], obstacle.pos[1], obstacle.radius):
+            return True
+    return False
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.check_inside_circle">
+    <p>def <span class="ident">check_inside_circle</span>(</p><p>x, y, a, b, r)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.check_inside_circle', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.check_inside_circle" class="source">
+    <pre><code>@staticmethod
+def check_inside_circle(x, y, a, b, r):
+    return (x - a) * (x - a) + (y - b) * (y - b) < r * r
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.check_inside_rect">
+    <p>def <span class="ident">check_inside_rect</span>(</p><p>x, y, rect)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.check_inside_rect', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.check_inside_rect" class="source">
+    <pre><code>@staticmethod
+def check_inside_rect(x, y, rect):
+    return (rect[0] + rect[2]) > x > rect[0] and (rect[1] + rect[3]) > y > rect[1]
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.draw">
+    <p>def <span class="ident">draw</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Method to draw car data on this frame to the Pygame screen.
+Rotate image to the angle the car is currently facing.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.draw', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.draw" class="source">
+    <pre><code>def draw(self):
+    """Method to draw car data on this frame to the Pygame screen.
+    Rotate image to the angle the car is currently facing."""
+    self.image = pygame.transform.rotate(self.orig_image, self.angle)
+    self.rect = self.image.get_rect(center=self.rect.center)
+    # Rendering the image to the current coordinates of the car.
+    env.Environment.screen.blit(self.image, self.rect)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.feed_forward">
+    <p>def <span class="ident">feed_forward</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.feed_forward', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.feed_forward" class="source">
+    <pre><code>def feed_forward(self):
+    self.solution.brain.feed_forward()
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.get_arm_distance">
+    <p>def <span class="ident">get_arm_distance</span>(</p><p>self, arm, x, y, angle, offset)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Function to return sensor distance to objects</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.get_arm_distance', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.get_arm_distance" class="source">
+    <pre><code>def get_arm_distance(self, arm, x, y, angle, offset):
+    """Function to return sensor distance to objects"""
+    i = 0  # Used to count the distance.
+    # Look at each point and see if we've hit something.
+    for point in arm:
+        i += 1
+        # Move the point to the right spot.
+        rotated_p = self.get_rotated_point(
+            x, y, point[0], point[1], angle + offset
+        )
+        # Check if we've hit something. Return the current i (distance) if we did.
+        if rotated_p[0] <= 0 or rotated_p[1] <= 0 \
+                or rotated_p[0] >= env.Environment.width or rotated_p[1] >= env.Environment.height:
+            return i  # Sensor is off the screen.
+        elif self.check_if_point_in_any_obstacle(rotated_p):
+            return i
+        elif constants.DRAW_SENSORS:  # Only render sensor arms is specified
+            pygame.draw.circle(env.Environment.screen, constants.BLACK, rotated_p, 2)
+    # Return the distance for the arm.
+    return i
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.get_outputs">
+    <p>def <span class="ident">get_outputs</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.get_outputs', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.get_outputs" class="source">
+    <pre><code>def get_outputs(self):
+    return self.solution.brain.get_decision()
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.get_rotated_point">
+    <p>def <span class="ident">get_rotated_point</span>(</p><p>x_1, y_1, x_2, y_2, radians)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Algorithm to rotate a point by an angle around another point.
+Rotate x_2, y_2 around x_1, y_1 by angle.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.get_rotated_point', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.get_rotated_point" class="source">
+    <pre><code>@staticmethod
+def get_rotated_point(x_1, y_1, x_2, y_2, radians):
+    """Algorithm to rotate a point by an angle around another point.
+    Rotate x_2, y_2 around x_1, y_1 by angle."""
+    x_change = (x_2 - x_1) * math.cos(radians) + \
+               (y_2 - y_1) * math.sin(radians)
+    y_change = (y_1 - y_2) * math.cos(radians) - \
+               (x_1 - x_2) * math.sin(radians)
+    new_x = x_change + x_1
+    new_y = y_change + y_1
+    return int(new_x), int(new_y)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.get_sensor_data">
+    <p>def <span class="ident">get_sensor_data</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Method to get sensors readings for the car</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.get_sensor_data', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.get_sensor_data" class="source">
+    <pre><code>def get_sensor_data(self):
+    """Method to get sensors readings for the car"""
+    return self.get_sensor_readings(self.rect.center[0], self.rect.center[1], math.radians(abs(self.angle) - 90))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.get_sensor_readings">
+    <p>def <span class="ident">get_sensor_readings</span>(</p><p>self, x, y, angle)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return the values of each sensor in a list</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.get_sensor_readings', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.get_sensor_readings" class="source">
+    <pre><code>def get_sensor_readings(self, x, y, angle):
+    """Return the values of each sensor in a list"""
+    readings = []  # List to store each sensor value
+    # Make our arms
+    arm_left = self.make_sensor_arm(x, y)
+    arm_middle = arm_left
+    arm_right = arm_left
+    # Rotate them and get readings.
+    readings.append(self.get_arm_distance(arm_left, x, y, angle, 0.75))
+    readings.append(self.get_arm_distance(arm_left, x, y, angle, 1.55))
+    readings.append(self.get_arm_distance(arm_middle, x, y, angle, 0))
+    readings.append(self.get_arm_distance(arm_left, x, y, angle, -1.55))
+    readings.append(self.get_arm_distance(arm_right, x, y, angle, -0.75))
+    return readings
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.groups">
+    <p>def <span class="ident">groups</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>list of Groups that contain this Sprite</p>
+<p>Sprite.groups(): return group_list</p>
+<p>Returns a list of all the Groups that contain this Sprite.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.groups', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.groups" class="source">
+    <pre><code>def groups(self):
+    """list of Groups that contain this Sprite
+    Sprite.groups(): return group_list
+    Returns a list of all the Groups that contain this Sprite.
+    """
+    return list(self.__g)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.kill">
+    <p>def <span class="ident">kill</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>remove the Sprite from all Groups</p>
+<p>Sprite.kill(): return None</p>
+<p>The Sprite is removed from all the Groups that contain it. This won't
+change anything about the state of the Sprite. It is possible to
+continue to use the Sprite after this method has been called, including
+adding it to Groups.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.kill', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.kill" class="source">
+    <pre><code>def kill(self):
+    """remove the Sprite from all Groups
+    Sprite.kill(): return None
+    The Sprite is removed from all the Groups that contain it. This won't
+    change anything about the state of the Sprite. It is possible to
+    continue to use the Sprite after this method has been called, including
+    adding it to Groups.
+    """
+    for c in self.__g:
+        c.remove_internal(self)
+    self.__g.clear()
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.make_sensor_arm">
+    <p>def <span class="ident">make_sensor_arm</span>(</p><p>x, y)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Method to create array of points representing one arm of sensor.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.make_sensor_arm', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.make_sensor_arm" class="source">
+    <pre><code>@staticmethod
+def make_sensor_arm(x, y):
+    """Method to create array of points representing one arm of sensor."""
+    spread = 16  # Default spread between sensor points.
+    distance = 10  # Gap before first sensor point.
+    arm_points = []
+    # Make an arm.
+    for i in range(1, 15):
+        arm_points.append((distance + x + (spread * i), y))
+    return arm_points
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.move_forward">
+    <p>def <span class="ident">move_forward</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Trigonometric function to determine new position based on the angle car is facing.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.move_forward', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.move_forward" class="source">
+    <pre><code>def move_forward(self):
+    """Trigonometric function to determine new position based on the angle car is facing."""
+    dx = math.cos(math.radians(self.angle + 90))
+    dy = math.sin(math.radians(self.angle + 90))
+    # Update position of car
+    self.pos = self.pos[0] + (dx * self.SPEED), self.pos[1] - (dy * self.SPEED)
+    self.rect.center = self.pos
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.remove">
+    <p>def <span class="ident">remove</span>(</p><p>self, *groups)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>remove the sprite from groups</p>
+<p>Sprite.remove(*groups): return None</p>
+<p>Any number of Group instances can be passed as arguments. The Sprite
+will be removed from the Groups it is currently a member of.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.remove', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.remove" class="source">
+    <pre><code>def remove(self, *groups):
+    """remove the sprite from groups
+    Sprite.remove(*groups): return None
+    Any number of Group instances can be passed as arguments. The Sprite
+    will be removed from the Groups it is currently a member of.
+    """
+    has = self.__g.__contains__
+    for group in groups:
+        if hasattr(group, '_spritegroup'):
+            if has(group):
+                group.remove_internal(self)
+                self.remove_internal(group)
+        else:
+            self.remove(*group)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.remove_internal">
+    <p>def <span class="ident">remove_internal</span>(</p><p>self, group)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.remove_internal', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.remove_internal" class="source">
+    <pre><code>def remove_internal(self, group):
+    del self.__g[group]
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.rotate_left">
+    <p>def <span class="ident">rotate_left</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Rotate car by maximum angle specified</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.rotate_left', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.rotate_left" class="source">
+    <pre><code>def rotate_left(self):
+    """Rotate car by maximum angle specified"""
+    self.angle = (self.angle + self.DELTA_ANGLE) % -360
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.rotate_right">
+    <p>def <span class="ident">rotate_right</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Rotate car by maximum angle specified</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.rotate_right', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.rotate_right" class="source">
+    <pre><code>def rotate_right(self):
+    """Rotate car by maximum angle specified"""
+    self.angle = (self.angle - self.DELTA_ANGLE) % -360
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.set_inputs">
+    <p>def <span class="ident">set_inputs</span>(</p><p>self, inputs)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.set_inputs', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.set_inputs" class="source">
+    <pre><code>def set_inputs(self, inputs):
+    self.solution.brain.set_inputs(inputs)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="car.Car.update">
+    <p>def <span class="ident">update</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Overriding the default Pygame update method
+Update mask and collision state</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-car.Car.update', this);">Show source &equiv;</a></p>
+  <div id="source-car.Car.update" class="source">
+    <pre><code>def update(self):
+    """Overriding the default Pygame update method
+    Update mask and collision state"""
+    self.mask = pygame.mask.from_surface(self.image)
+    self.crashed = self.check_if_crashed()
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="car.Car.angle" class="name">var <span class="ident">angle</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="car.Car.boom" class="name">var <span class="ident">boom</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="car.Car.borders" class="name">var <span class="ident">borders</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="car.Car.crashed" class="name">var <span class="ident">crashed</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="car.Car.image" class="name">var <span class="ident">image</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="car.Car.inputs" class="name">var <span class="ident">inputs</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="car.Car.mask" class="name">var <span class="ident">mask</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="car.Car.obstacles" class="name">var <span class="ident">obstacles</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="car.Car.orig_image" class="name">var <span class="ident">orig_image</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="car.Car.output" class="name">var <span class="ident">output</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="car.Car.pos" class="name">var <span class="ident">pos</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="car.Car.rect" class="name">var <span class="ident">rect</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="car.Car.solution" class="name">var <span class="ident">solution</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+      </div>
+      </div>
+
+  </section>
+
+    </article>
+  <div class="clear"> </div>
+  <footer id="footer">
+    <p>
+      Documentation generated by
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
+    </p>
+
+    <p>pdoc is in the public domain with the
+      <a href="http://unlicense.org">UNLICENSE</a></p>
+
+    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
+  </footer>
+</div>
+</body>
+</html>
